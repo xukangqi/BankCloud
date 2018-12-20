@@ -1,0 +1,12 @@
+server:
+  port: 8003
+eureka:
+  instance:
+    hostname: eureka003
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://eureka003:8001,http://eureka002:8002,http://eureka003:8003
+  server:
+    wait-time-in-ms-when-sync-empty: 5
