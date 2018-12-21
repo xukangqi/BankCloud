@@ -1,12 +1,16 @@
 server:
   port: 8001
+spring:
+  application:
+    name: eureka-cluster
 eureka:
   instance:
     hostname: eureka001
   client:
-    register-with-eureka: false
-    fetch-registry: false
     service-url:
-      defaultZone: http://eureka003:8001,http://eureka002:8002,http://eureka003:8003
+      defaultZone: http://eureka002:8002/eureka/,http://eureka003:8003/eureka/
   server:
     wait-time-in-ms-when-sync-empty: 5
+
+info:
+  name: bank-eureka001

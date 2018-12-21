@@ -1,0 +1,18 @@
+server:
+  port: 9001
+spring:
+  application:
+    name: demoProvider #服务名,用来调用
+  profiles:
+    active:
+      default
+  cloud:
+    config:
+      enabled: true
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: DemoProvider9001 #别名，显示在eureka页面中，随意
+  client:
+    service-url:
+      defaultZone: http://eureka001:8001/eureka/,http://eureka002:8002/eureka/,http://eureka003:8003/eureka/

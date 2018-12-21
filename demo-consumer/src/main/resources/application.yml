@@ -1,0 +1,25 @@
+server:
+  port: 9002
+spring:
+  application:
+    name: demoConsumer #服务名,用来注册
+  profiles:
+    active:
+      default
+  cloud:
+    config:
+      enabled: true
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: demoConsumer9002 #别名，显示在eureka页面中，随意
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka001:8001/eureka/,http://eureka002:8002/eureka/,http://eureka003:8003/eureka/
+
+
+feign:
+  hystrix:
+    enabled: true
