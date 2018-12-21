@@ -2,6 +2,7 @@
 **/.mvn
 **/mvnw.cmd
 **/mvnw
+**/log
 
 ### STS ###
 .apt_generated
@@ -11,6 +12,7 @@
 .settings
 .springBeans
 .sts4-cache
+
 
 ### IntelliJ IDEA ###
 **/.idea
