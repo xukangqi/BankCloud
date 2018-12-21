@@ -5,10 +5,10 @@ spring:
     name: eureka-cluster
 eureka:
   instance:
-    hostname: eureka001
+    hostname: eurekaserver1
   client:
     service-url:
-      defaultZone: http://eureka002:8002/eureka/,http://eureka003:8003/eureka/
+      defaultZone: http://eurekaserver2:8002/eureka/,http://eurekaserver2:8003/eureka/
   server:
     wait-time-in-ms-when-sync-empty: 5
 
