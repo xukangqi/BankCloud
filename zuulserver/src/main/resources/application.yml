@@ -13,9 +13,9 @@ eureka:
     wait-time-in-ms-when-sync-empty: 5
 zuul:
   routes:
-    testservice:
+    demoprovide:
       path: /demoprovider/**
       serviceId: demoProvider
-    offerservice:
+    democonsumer:
       path: /democonsumer/**
       serviceId: demoConsumer

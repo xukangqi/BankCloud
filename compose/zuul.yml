@@ -1,3 +1,4 @@
+#kubectl scale deployment zuul --replicas 2 ¶¯Ì¬À©Õ¹
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,8 +27,8 @@ spec:
           - name: EUREKASERVER_URI
             # value: http://eurekasingle:8004/eureka/
             value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
-          # - name: SERVER_PORT
-          #   value: 8005
+          - name: SERVER_PORT
+            value: "8005"
 ---
 
 apiVersion: v1

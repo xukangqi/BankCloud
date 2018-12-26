@@ -18,19 +18,13 @@ spec:
         tier: backend
     spec:
       containers:
-      - name: demo-provider
-        image: bank/demo-provider:1.0
-        ports:
-        - containerPort: 9001
-      - name: mysql
-        image: mysql
-        ports:
-          - containerPort: 3306
-        env:
-          - name: MYSQL_ROOT_PASSWORD
-            value: "123456"
-        # env:
-        # - name: eureka.client.registry-fetch-interval-seconds
-        #   value: "5"
-        # - name: eureka.client.serviceUrl.defaultZone
-        #   value: http://eureka:8761/eureka/
+        - name: demo-provider
+          image: bank/demo-provider:1.0
+          ports:
+            - containerPort: 9001
+          env:
+            - name: EUREKASERVER_URI
+              # value: http://eurekasingle:8004/eureka/
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "9001"

@@ -23,6 +23,12 @@ spec:
         image: bank/eureka002:1.0
         ports:
         - containerPort: 8002
+        env:
+          - name: EUREKASERVER_URI
+            # value: http://eurekasingle:8004/eureka/
+            value: http://eurekaserver1:8001/eureka/,http://eurekaserver3:8003/eureka/
+          - name: SERVER_PORT
+            value: "8002"
 
 ---
 
