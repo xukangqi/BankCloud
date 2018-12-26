@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-consumer
+  labels:
+    app: demo-consumer
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: demo-consumer
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: demo-consumer
+        tier: backend
+    spec:
+      containers:
+      - name: demo-consumer
+        image: bank/demo-consumer:1.0
+        ports:
+        - containerPort: 9002
+        # env:
+        # - name: eureka.client.registry-fetch-interval-seconds
+        #   value: "5"
+        # - name: eureka.client.serviceUrl.defaultZone
+        #   value: http://eureka:8761/eureka/
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-consumer
+  labels:
+    app: demo-consumer
+    tier: backend
+spec:
+  type: NodePort
+  ports:
+  - port: 9002
+    targetPort: 9002
+  selector:
+    app: demo-consumer
+    tier: backend

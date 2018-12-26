@@ -16,4 +16,9 @@ public class DemoController {
     public String hello(){
         return demoService.hello();
     }
+
+    @GetMapping("/test")
+    public  String test(){
+        return  "test ok";
+    }
 }

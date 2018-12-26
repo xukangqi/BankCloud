@@ -1,0 +1,21 @@
+server:
+  port: 8005
+spring:
+  application:
+    name: zuulserver
+eureka:
+  instance:
+    hostname: zuulserver
+  client:
+    service-url:
+      defaultZone: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+  server:
+    wait-time-in-ms-when-sync-empty: 5
+zuul:
+  routes:
+    testservice:
+      path: /demoprovider/**
+      serviceId: demoProvider
+    offerservice:
+      path: /democonsumer/**
+      serviceId: demoConsumer

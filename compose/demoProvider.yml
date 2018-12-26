@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-provider
+  labels:
+    app: demo-provider
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: demo-provider
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: demo-provider
+        tier: backend
+    spec:
+      containers:
+      - name: demo-provider
+        image: bank/demo-provider:1.0
+        ports:
+        - containerPort: 9001
+      - name: mysql
+        image: mysql
+        ports:
+          - containerPort: 3306
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: "123456"
+        # env:
+        # - name: eureka.client.registry-fetch-interval-seconds
+        #   value: "5"
+        # - name: eureka.client.serviceUrl.defaultZone
+        #   value: http://eureka:8761/eureka/
