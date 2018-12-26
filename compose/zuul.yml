@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zuul
+  labels:
+    app: zuul
+    tier: gateway
+spec:
+  selector:
+    matchLabels:
+     app: zuul
+     tier: gateway
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: zuul
+        tier: gateway
+    spec:
+      containers:
+      - name:  zuul-server
+        image: bank/zuul:1.0
+        ports:
+        - containerPort: 8005
+        env:
+          - name: EUREKASERVER_URI
+            # value: http://eurekasingle:8004/eureka/
+            value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+          # - name: SERVER_PORT
+          #   value: 8005
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-zuul-server
+  labels:
+    app: zuul
+    tier: gateway
+spec:
+  type: NodePort
+  ports:
+  - port: 8005
+    targetPort: 8005
+  selector:
+    app: zuul
+    tier: gateway
