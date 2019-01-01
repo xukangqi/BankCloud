@@ -12,7 +12,7 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-    instance-id: demoConsumer9002 #别名，显示在eureka页面中，随意
+#    hostname: democonsumer
   client:
     register-with-eureka: true
     fetch-registry: true
