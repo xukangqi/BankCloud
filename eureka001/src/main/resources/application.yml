@@ -5,12 +5,16 @@ spring:
     name: eureka-cluster
 eureka:
   instance:
-    hostname: eurekaserver1
+    hostname: localhost
   client:
+    registerWithEureka: false
+    fetchRegistry: false
     service-url:
-      defaultZone: http://eurekaserver2:8002/eureka/,http://eurekaserver2:8003/eureka/
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
   server:
     wait-time-in-ms-when-sync-empty: 5
+
+# 通过 eureka.client.registerWithEureka:false 和 fetchRegistry:false 来表明自己是一个 Eureka Server.
 
 info:
   name: bank-eureka001

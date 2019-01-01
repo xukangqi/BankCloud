@@ -1,0 +1,29 @@
+# springboot配置文件
+
+# 实体类包路径，mapper xml 映射文件
+mybatis:
+  type-aliases-package: com.bank.userother.pojo
+  mapper-locations: classpath:mapper/*.xml
+
+
+server:
+  port: 3003
+
+spring:
+  profiles:
+    active: jdbc
+  cloud:
+    config:
+      enabled: true
+  application:
+    name: provider-user-other  #服务名，用来调用
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8001/eureka/
+
+info:
+  name: provider-user-other

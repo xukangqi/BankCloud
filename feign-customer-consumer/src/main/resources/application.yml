@@ -1,0 +1,28 @@
+
+server:
+  port: 4002
+
+spring:
+  application:
+    name: feign-customer-consumer  #服务名，用来调用
+  thymeleaf:
+    cache: false
+    mode: LEGACYHTML5
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8001/eureka/
+
+feign:
+  hystrix:
+    enabled: true
+
+info:
+  name: feign-customer-consumer
