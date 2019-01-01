@@ -28,7 +28,6 @@ public class CustomerController {
     @Autowired
     private IAccountService accountService;
 
-
     // 返回单个客户信息（已测试）
     @RequestMapping(value = "/{custID}", method = RequestMethod.GET)
     @ResponseBody

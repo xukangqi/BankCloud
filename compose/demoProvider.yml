@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-provider
+  labels:
+    app: demo-provider
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: demo-provider
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: demo-provider
+        tier: backend
+    spec:
+      containers:
+        - name: demo-provider
+          image: bank/demo-provider:1.0
+          ports:
+            - containerPort: 9001
+          env:
+            - name: EUREKASERVER_URI
+              # value: http://eurekasingle:8004/eureka/
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "9001"
+            - name: CONFIGSERVER_URI
+              value: http://configserver:10001
+            - name: PROFILE
+              value: dev

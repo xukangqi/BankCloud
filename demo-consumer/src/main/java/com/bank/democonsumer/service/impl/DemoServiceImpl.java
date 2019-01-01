@@ -1,6 +1,7 @@
 package com.bank.democonsumer.service.impl;
 
 import com.bank.democonsumer.api.TestServiceClient;
+import com.bank.democonsumer.pojo.BankUser;
 import com.bank.democonsumer.service.DemoService;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
@@ -27,5 +28,23 @@ public class DemoServiceImpl implements DemoService {
     //如果调用超时调用备用方法
     public String errorMethod(){
          return  "error";
+    }
+
+    @Override
+//    @HystrixCommand(fallbackMethod = "getObjectError",
+//            commandProperties = {
+//                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds",value = "5000")
+//            }
+//    )
+    public BankUser getObject() {
+        BankUser bankUser1=new BankUser();
+        bankUser1.setAddress("123124124");
+        BankUser bankUser=testServiceClient.getObject(bankUser1);
+        System.out.println(bankUser.getAddress());
+        return bankUser;
+    }
+
+    public BankUser getObjectError() {
+        return new BankUser();
     }
 }
