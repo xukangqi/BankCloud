@@ -12,6 +12,9 @@ eureka:
   server:
     wait-time-in-ms-when-sync-empty: 5
 zuul:
+  host:
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
   routes:
     demoprovide:
       path: /demoprovider/**
@@ -19,3 +22,15 @@ zuul:
     democonsumer:
       path: /democonsumer/**
       serviceId: demoConsumer
+ribbon:
+  ReadTimeout: 60000  # 单位毫秒数
+  SocketTimeout: 60000
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 60000

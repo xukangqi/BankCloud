@@ -1,34 +1,47 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: demo-provider
+  name: configserver
   labels:
-    app: demo-provider
+    app: configserver
     tier: backend
 spec:
   selector:
     matchLabels:
-      app: demo-provider
+      app: configserver
       tier: backend
   replicas: 1
   template:
     metadata:
       labels:
-        app: demo-provider
+        app: configserver
         tier: backend
     spec:
       containers:
-        - name: demo-provider
-          image: bank/demo-provider:1.0
+        - name: configserver
+          image: bank/configserver:1.0
           ports:
-            - containerPort: 9001
+            - containerPort: 10001
           env:
             - name: EUREKASERVER_URI
               # value: http://eurekasingle:8004/eureka/
               value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
             - name: SERVER_PORT
-              value: "9001"
-            - name: CONFIGSERVER_URI
-              value: http://configserver:10001
-            - name: PROFILE
-              value: dev
+              value: "10001"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: configserver
+  labels:
+    app: configserver
+    tier: backend
+spec:
+  type: NodePort
+  ports:
+    - port: 10001
+      targetPort: 10001
+  selector:
+    app: configserver
+    tier: backend

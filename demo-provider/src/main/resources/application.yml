@@ -7,25 +7,6 @@ spring:
   profiles:
     active:
       default
-  cloud:
-    config:
-      enabled: true
-
-  datasource:
-    username: root
-    password: 123456
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bank?useUnicode=true&characterEncoding=utf8&useSSL=false
-    druid:
-      stat-view-servlet:
-        url-pattern: /druid/*
-        reset-enable: true
-        login-username: admin
-        login-password: admin
-      web-stat-filter:
-        url-pattern: /*
-        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
-
 eureka:
   instance:
     prefer-ip-address: true
