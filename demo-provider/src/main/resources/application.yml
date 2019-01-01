@@ -12,7 +12,11 @@ eureka:
     prefer-ip-address: true
   client:
     service-url:
+<<<<<<< HEAD
+      defaultZone: http://localhost:8001/eureka/
+=======
       defaultZone: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+>>>>>>> d2879817295ef77330414de00ba168de9c735ec4
