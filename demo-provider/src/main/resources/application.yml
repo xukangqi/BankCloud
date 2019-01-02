@@ -10,7 +10,6 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-    instance-id: DemoProvider9001 #别名，显示在eureka页面中，随意
   client:
     service-url:
 <<<<<<< HEAD

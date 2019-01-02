@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 # 注意事项
 需要在本地host中加入规则
 ```
@@ -56,11 +55,7 @@
                 </configuration>
             </plugin>
 ```
-
-
-
 ## 数据库相关设置
 在使用之前需要修改application.yml中的相关配置，包括用户名，密码等<br>
 访问localhost:9001/test/database测试<br>
 还配置有druid监控页面,通过 localhost:9001/druid访问，账号密码都是admin
->>>>>>> d2879817295ef77330414de00ba168de9c735ec4
