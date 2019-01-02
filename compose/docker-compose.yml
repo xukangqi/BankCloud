@@ -3,21 +3,21 @@ services:
   eurekaserver1:
     image:   bank/eureka001:1.0
     ports:
-      - "8001:8001"
+    - "8001:8001"
   eurekaserver2:
     image:   bank/eureka002:1.0
     ports:
-      - "8002:8002"
+    - "8002:8002"
   eurekaserver3:
     image:   bank/eureka003:1.0
     ports:
-      - "8003:8003"
+    - "8003:8003"
   demoConsumer:
     image:   bank/demo-consumer:1.0
     ports:
-      - "9002:9002"
+    - "9002:9002"
   demoProvider:
     image:   bank/demo-provider:1.0
     ports:
-      - "9001:9001"
+    - "9001:9001"
 
