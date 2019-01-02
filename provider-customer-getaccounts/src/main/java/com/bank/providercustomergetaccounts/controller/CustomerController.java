@@ -32,11 +32,11 @@ public class CustomerController {
 
     // 返回该id的客户所有账户信息（返回中文乱码）
     @RequestMapping(value = "/account/{custId}", method = RequestMethod.GET)
-    @ResponseBody
-    public BankResult getAccounts(@PathVariable String custId) {
+@ResponseBody
+public BankResult getAccounts(@PathVariable String custId) {
         List<BankAccount> accountList = accountService.getAccounts(custId);
         return new BankResult(200, "ok", accountList);
-    }
+        }
 
 
-}
+        }
