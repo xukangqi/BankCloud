@@ -27,6 +27,12 @@ spec:
               value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
             - name: SERVER_PORT
               value: "3004"
+            - name: DATABASE_URI
+              value: jdbc:mysql://localhost:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -57,6 +63,12 @@ spec:
               value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
             - name: SERVER_PORT
               value: "3003"
+            - name: DATABASE_URI
+              value: jdbc:mysql://localhost:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -87,3 +99,9 @@ spec:
               value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
             - name: SERVER_PORT
               value: "3005"
+            - name: DATABASE_URI
+              value: jdbc:mysql://localhost:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
