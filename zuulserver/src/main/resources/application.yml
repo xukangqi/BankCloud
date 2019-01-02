@@ -22,6 +22,9 @@ zuul:
     democonsumer:
       path: /democonsumer/**
       serviceId: demoConsumer
+    customer-getaccounts:
+      path: /getaccounts/**
+      serviceId: customer-getaccounts
 ribbon:
   ReadTimeout: 60000  # 单位毫秒数
   SocketTimeout: 60000
