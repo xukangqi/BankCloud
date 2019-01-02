@@ -131,5 +131,21 @@ public class CustomerController {
         }
     }
 
+    // 验证account
+    @RequestMapping(value = "/account/verify", method = RequestMethod.POST)
+    @ResponseBody
+    public BankResult verify(@RequestParam(value = "accountId") String accountId, @RequestParam(value = "password") String password) {
+        boolean is = accountService.verify(accountId, password);
+        if (is == true) {
+            return BankResult.ok();
+        } else {
+            BankResult bankResult = new BankResult();
+            String msg = "账户验证错误";
+            bankResult.setData(msg);
+            bankResult.setStatus(123);
+            return bankResult;
+        }
+    }
+
 
 }

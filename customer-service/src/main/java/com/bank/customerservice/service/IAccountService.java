@@ -57,4 +57,12 @@ public interface IAccountService {
     void update(BankAccount account);
 
 
+    /**
+     * 验证账户
+     * @param accountId
+     * @param password
+     * @return
+     */
+    boolean verify(String accountId, String password);
+
 }
