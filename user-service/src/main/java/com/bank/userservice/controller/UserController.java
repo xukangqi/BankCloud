@@ -64,7 +64,7 @@ public class UserController {
     // 用户注册（已测试）
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
-    public BankResult register(BankUser bankUser) {
+    public BankResult register(@RequestBody BankUser bankUser) {
         System.out.println(bankUser.getUserName());
         boolean exist = userService.isExist(bankUser.getUserName());
         if (exist) {

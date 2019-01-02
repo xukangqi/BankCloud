@@ -100,4 +100,16 @@ public class AccountServiceImpl implements IAccountService {
         bankAccountMapper.updateByPrimaryKey(account);
     }
 
+    @Override
+    public boolean verify(String accountId, String password) {
+        BankAccountExample example = new BankAccountExample();
+        String pw = MD5.string2MD5(password);
+        example.createCriteria().andAccountEqualTo(accountId).andPasswordEqualTo(pw);
+        List<BankAccount> bankAccountList = bankAccountMapper.selectByExample(example);
+        if (bankAccountList.size() == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

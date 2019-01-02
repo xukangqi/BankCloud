@@ -12,7 +12,7 @@ eureka:
   server:
     waitTimeInMsWhenSyncEmpty: 30
   serviceUrl:
-    defaultZone: http://eurekasingle:8004
+    defaultZone: http://localhost:8004
 
 info:
   name: eureka-single
