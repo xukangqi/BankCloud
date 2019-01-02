@@ -43,23 +43,6 @@ public class UserController {
         return BankResult.ok();
     }
 
-    // 用户登入 （已测试）
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ResponseBody
-    public BankResult login(@RequestParam(value = "username") String username, @RequestParam(value = "password") String password) {
-        System.out.println(username);
-        BankUser user = userService.login(username, password);
-        if (user == null) {
-            BankResult bankResult = new BankResult();
-            String msg = "登录失败,请检查账户、密码是否正确";
-            bankResult.setStatus(123);
-            bankResult.setMsg(msg);
-            return bankResult;
-        } else {
-            user.setPassword(null);
-            return new BankResult(200, "ok", user);
-        }
-    }
 
     // 用户注册（已测试）
     @RequestMapping(value = "/register", method = RequestMethod.POST)

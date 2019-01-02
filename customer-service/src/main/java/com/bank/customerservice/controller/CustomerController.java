@@ -40,14 +40,6 @@ public class CustomerController {
         return bankResult;
     }
 
-    // 返回单个客户信息（已测试）
-    @RequestMapping(value = "/{custID}", method = RequestMethod.GET)
-    @ResponseBody
-    public BankResult getOneCustomer(@PathVariable String custID) {
-        BankCustomer customer = customerService.getCustomerById(custID);
-        BankResult bankResult = new BankResult(200, "ok", customer);
-        return bankResult;
-    }
 
     // 新建一个客户（已测试）
     @RequestMapping(value = "/new", method = RequestMethod.POST)
@@ -85,14 +77,6 @@ public class CustomerController {
         }
     }
 
-
-    // 返回该id的客户所有账户信息（返回中文乱码）
-    @RequestMapping(value = "/account/{custId}", method = RequestMethod.GET)
-    @ResponseBody
-    public BankResult getAccounts(@PathVariable String custId) {
-        List<BankAccount> accountList = accountService.getAccounts(custId);
-        return new BankResult(200, "ok", accountList);
-    }
 
 
     // 新建一个账户（已测试）
