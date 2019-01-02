@@ -11,5 +11,6 @@ eureka:
       defaultZone: http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
   server:
     wait-time-in-ms-when-sync-empty: 5
+    enable-self-preservation: false
 info:
   name: bank-eureka001

@@ -27,12 +27,10 @@ spec:
               value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
             - name: SERVER_PORT
               value: "3001"
-            - name: DATABASE_URI
-              value: jdbc:mysql://localhost:3306/bank?useUnicode=true&characterEncoding=utf8
-            - name: USERNAME
-              value: "root"
-            - name: PASSWORD
-              value: "123456"
+            - name: CONFIGSERVER_URI
+              value: http://configserver:10001
+            - name: PROFILE
+              value: dev
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -63,9 +61,23 @@ spec:
               value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
             - name: SERVER_PORT
               value: "3002"
-            - name: DATABASE_URI
-              value: jdbc:mysql://localhost:3306/bank?useUnicode=true&characterEncoding=utf8
-            - name: USERNAME
-              value: "root"
-            - name: PASSWORD
-              value: "123456"
+            - name: CONFIGSERVER_URI
+              value: http://configserver:10001
+            - name: PROFILE
+              value: dev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-login
+  labels:
+    app: user-login
+    tier: backend
+spec:
+  type: NodePort
+  ports:
+    - port: 3001
+      targetPort: 3001
+  selector:
+    app: user-login
+    tier: backend

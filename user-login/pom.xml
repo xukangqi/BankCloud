@@ -52,6 +52,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+
         <!-- mybatis -->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
@@ -82,7 +87,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.11</version>
+            <version>5.1.46</version>
         </dependency>
 
     </dependencies>

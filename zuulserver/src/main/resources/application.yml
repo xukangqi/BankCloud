@@ -11,29 +11,3 @@ eureka:
       defaultZone: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
   server:
     wait-time-in-ms-when-sync-empty: 5
-zuul:
-  host:
-    socket-timeout-millis: 60000
-    connect-timeout-millis: 60000
-  routes:
-    demoprovide:
-      path: /demoprovider/**
-      serviceId: demoProvider
-    democonsumer:
-      path: /democonsumer/**
-      serviceId: demoConsumer
-    customer-getaccounts:
-      path: /getaccounts/**
-      serviceId: customer-getaccounts
-ribbon:
-  ReadTimeout: 60000  # 单位毫秒数
-  SocketTimeout: 60000
-hystrix:
-  command:
-    default:
-      execution:
-        timeout:
-          enabled: true
-        isolation:
-          thread:
-            timeoutInMilliseconds: 60000

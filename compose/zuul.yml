@@ -1,4 +1,4 @@
-#kubectl scale deployment zuul --replicas 2 ¶¯Ì¬À©Õ¹
+#kubectl scale deployment zuul --replicas 2
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9,8 +9,8 @@ metadata:
 spec:
   selector:
     matchLabels:
-     app: zuul
-     tier: gateway
+      app: zuul
+      tier: gateway
   replicas: 1
   template:
     metadata:
@@ -19,16 +19,20 @@ spec:
         tier: gateway
     spec:
       containers:
-      - name:  zuul-server
-        image: bank/zuul:1.0
-        ports:
-        - containerPort: 8005
-        env:
-          - name: EUREKASERVER_URI
-            # value: http://eurekasingle:8004/eureka/
-            value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
-          - name: SERVER_PORT
-            value: "8005"
+        - name:  zuul-server
+          image: bank/zuul:1.0
+          ports:
+            - containerPort: 8005
+          env:
+            - name: EUREKASERVER_URI
+              # value: http://eurekasingle:8004/eureka/
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "8005"
+            - name: CONFIGSERVER_URI
+              value: http://configserver:10001
+            - name: PROFILE
+              value: default
 ---
 
 apiVersion: v1
@@ -41,8 +45,8 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 8005
-    targetPort: 8005
+    - port: 8005
+      targetPort: 8005
   selector:
     app: zuul
     tier: gateway
