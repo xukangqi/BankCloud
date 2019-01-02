@@ -24,6 +24,11 @@
         <module>zuulserver</module>
         <module>demo-consumer</module>
         <module>demo-provider</module>
+        <module>customer-getaccounts</module>
+        <module>customer-getonecustomer</module>
+        <module>customer-service</module>
+        <module>user-login</module>
+        <module>user-service</module>
     </modules>
     <build>
         <plugins>

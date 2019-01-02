@@ -16,7 +16,7 @@
 ```
 在build->plugins标签中还需要增加docker标签
 ```xml
-<plugin>
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
