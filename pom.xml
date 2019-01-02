@@ -13,7 +13,7 @@
     <groupId>com</groupId>
     <artifactId>bank</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>userlogin</name>
+    <name>banksystem</name>
     <description>Demo project for Spring Boot</description>
     <modules>
         <module>eureka001</module>
