@@ -27,20 +27,4 @@ public class TransferController {
 
         return bankResult;
     }
-
-    @RequestMapping(value = "/query", method = RequestMethod.GET)
-    @ResponseBody
-    public BankResult getTransferLogs() {
-        BankResult bankResult = transferService.getTransferLogs();
-
-        return bankResult;
-    }
-
-    @RequestMapping(value = "/querydetail/{transferId}", method = RequestMethod.GET)
-    @ResponseBody
-    public BankResult getOneTransferLog(@RequestParam(value = "transferId")String transferId) {
-        BankResult bankResult = transferService.getOneTransferLog(transferId);
-
-        return bankResult;
-    }
 }

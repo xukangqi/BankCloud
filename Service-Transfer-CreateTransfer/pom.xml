@@ -9,16 +9,16 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.bank</groupId>
-    <artifactId>Service-Transfer</artifactId>
+    <artifactId>Service-Transfer-CreateTransfer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>service-remit</name>
+    <name>service-Transfer-CreateTransfer</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>Greenwich.RC1</spring-cloud.version>
-        <start-class>com.bank.ServiceTransfer.ServiceTransferApplication</start-class>
-        <docker.image.name>bank/Service-Transfer</docker.image.name>
+        <start-class>com.bank.ServiceTransfer.ServiceTransferCreateApplication</start-class>
+        <docker.image.name>bank/Service-Transfer-CreateTransfer</docker.image.name>
         <docker.image.tag>1.0</docker.image.tag>
     </properties>
 

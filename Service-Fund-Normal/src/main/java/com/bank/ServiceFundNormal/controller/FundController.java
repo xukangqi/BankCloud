@@ -52,25 +52,6 @@ public class FundController {
         return bankResult;
     }
 
-    @RequestMapping(value = "/query/product", method = RequestMethod.GET)
-    @ResponseBody
-    public BankResult getFundProducts() {
-        // service层操作
-        BankResult bankResult = fundService.getFundProducts();
-
-        return bankResult;
-    }
-
-    // 请求格式/query/productdetail?fundId=123&purchaseDate=123
-    @RequestMapping(value = "/query/productdetail", method = RequestMethod.GET)
-    @ResponseBody
-    public BankResult getFundOneProduct(@RequestParam(value = "fundId") String fundId) {
-        // service层操作
-        BankResult bankResult = fundService.getOneFundProduct(fundId);
-
-        return bankResult;
-    }
-
     @RequestMapping(value = "/query/tx", method = RequestMethod.GET)
     @ResponseBody
     public BankResult getFundLogs() {

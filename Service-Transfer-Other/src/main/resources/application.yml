@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ServiceTransfer #服务名,用来调用
+    name: ServiceTransferOther #服务名,用来调用
   profiles:
     active:
       default
@@ -29,7 +29,7 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-    instance-id: ServiceTransfer9105 #别名，显示在eureka页面中，随意
+#    instance-id: ServiceTransferOther9105 #别名，显示在eureka页面中，随意
   client:
     service-url:
       defaultZone: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/

@@ -1,41 +1,42 @@
 package com.bank.ServiceRemitNormal.service.impl;
 
-import com.bank.ServiceRemitNormal.api.RemitProducerClient;
+import com.bank.ServiceRemitNormal.api.FeignAccountCustomer;
+import com.bank.ServiceRemitNormal.api.FeignGetOneCustomer;
 import com.bank.ServiceRemitNormal.dao.*;
 import com.bank.ServiceRemitNormal.pojo.BankAccount;
 import com.bank.ServiceRemitNormal.pojo.BankCustomer;
 import com.bank.ServiceRemitNormal.pojo.BankRemitLog;
-import com.bank.ServiceRemitNormal.pojo.BankRemitLogExample;
 import com.bank.ServiceRemitNormal.service.RemitService;
 import com.bank.ServiceRemitNormal.utils.BankResult;
 import com.bank.ServiceRemitNormal.utils.MD5;
 import com.bank.ServiceRemitNormal.utils.SnowFlake;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class RemitServiceImpl implements RemitService {
     @Autowired
     private BankRemitLogMapper bankRemitLogMapper;
     @Autowired
-    private BankAccountMapper bankAccountMapper;
+    private FeignAccountCustomer feignAccountCustomer;
     @Autowired
-    private BankCustomerMapper bankCustomerMapper;
-    @Autowired
-    private RemitProducerClient remitProducerClient;
+    private  FeignGetOneCustomer feignGetOneCustomer;
 
     private long datacenterId = 4L;  //数据中心
     private long machineId ;     //机器标识
 
+    //已测试 2019年1月3日 12:02:02
     @Override
     public BankResult createRemit(String name, String phone, String remitOutAccount, String remitInAccount, String password, double amount) {
         machineId = 1L;
-
-        BankAccount outAccount = bankAccountMapper.selectByPrimaryKey(remitOutAccount);
-        BankCustomer outAccountCustomer = bankCustomerMapper.selectByPrimaryKey(outAccount.getCustId());
-        BankAccount inAccount = bankAccountMapper.selectByPrimaryKey(remitInAccount);
+        ObjectMapper mapper = new ObjectMapper();
+        BankAccount outAccount = mapper.convertValue(feignAccountCustomer.getAccount(remitOutAccount).getData(), BankAccount.class);
+        //BankAccount outAccount = bankAccountMapper.selectByPrimaryKey(remitOutAccount);
+        BankCustomer outAccountCustomer = mapper.convertValue(feignGetOneCustomer.getOneCustomer(outAccount.getCustId()).getData(), BankCustomer.class);
+        //BankCustomer outAccountCustomer = bankCustomerMapper.selectByPrimaryKey(outAccount.getCustId());
+        BankAccount inAccount = mapper.convertValue(feignAccountCustomer.getAccount(remitInAccount).getData(), BankAccount.class);
+        //BankAccount inAccount = bankAccountMapper.selectByPrimaryKey(remitInAccount);
 
         String pw = MD5.string2MD5(password);
 
@@ -68,7 +69,8 @@ public class RemitServiceImpl implements RemitService {
         bankRemitLog.setAmount(amount);
 
         outAccount.setBalances(outAccount.getBalances() - amount);
-        bankAccountMapper.updateByPrimaryKey(outAccount);
+        feignAccountCustomer.updateAccount(outAccount);
+        //bankAccountMapper.updateByPrimaryKey(outAccount);
         bankRemitLog.setRemitGenerateDate(String.valueOf(System.currentTimeMillis()));
         bankRemitLog.setRemitArriveDate(String.valueOf("Unpaid"));
 
@@ -76,20 +78,4 @@ public class RemitServiceImpl implements RemitService {
 
         return BankResult.ok(bankRemitLog.getRemitId());
     }
-
-    @Override
-    public BankResult getRemit(String remitInAccount, String remitId) {
-        return remitProducerClient.getRemit(remitInAccount, remitId);
-    }
-
-    @Override
-    public BankResult getRemitLogs() {
-        return remitProducerClient.getRemitLogs();
-    }
-
-    @Override
-    public BankResult getOneRemitLog(String remitId) {
-        return remitProducerClient.getOneRemitLog(remitId);
-    }
-
 }

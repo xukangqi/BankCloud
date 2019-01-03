@@ -15,19 +15,6 @@ public class TransferController {
     @Autowired
     private TransferService transferService;
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    @ResponseBody
-    public BankResult createTransfer(@RequestParam(value = "name")String name,
-                                     @RequestParam(value = "phone")String phone,
-                                     @RequestParam(value = "transferOutAccount")String transferOutAccount,
-                                     @RequestParam(value = "transferInAccount")String transferInAccount,
-                                     @RequestParam(value = "password")String password,
-                                     @RequestParam(value = "amount")double amount) {
-        BankResult bankResult = transferService.createTransfer(name, phone, transferOutAccount, transferInAccount, password, amount);
-
-        return bankResult;
-    }
-
     @RequestMapping(value = "/query", method = RequestMethod.GET)
     @ResponseBody
     public BankResult getTransferLogs() {
