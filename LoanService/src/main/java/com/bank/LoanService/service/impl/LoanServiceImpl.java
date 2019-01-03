@@ -29,15 +29,6 @@ public class LoanServiceImpl implements LoanService {
     private BankLoanTypeMapper bankLoanTypeMapper;
     @Autowired
     private BankLoanPaylogMapper bankLoanPaylogMapper;
-    @Autowired
-    private JedisClient jedisClient ;
-
-    private String REDIS_SESSION_KEY = "ZHOUJIAN:";
-    private String LOAN = "LOAN$";
-    private String LOAN_PAYMENT = "LOAN_PAYMENT$";
-    private String LOAN_LOG = "LOAN_LOG$";
-    private String LOAN_TYPE = "LOAN_TYPE$";
-    private Integer SESSION_EXPIRE = 1800;
 
     private long datacenterId = 3L;  //数据中心
     private long machineId ;     //机器标识
@@ -62,6 +53,7 @@ public class LoanServiceImpl implements LoanService {
             return isLegalInfo;
         }
         String custId = isLegalInfo.getData().toString();
+        System.out.println(custId);
         isLegalInfo = null;
 
         //利用雪花算法算出 transId
@@ -79,18 +71,8 @@ public class LoanServiceImpl implements LoanService {
             case ("1") : loanType = "住房贷款"; break;
             case ("2") : loanType = "小微贷款"; break;
             case ("3") : loanType = "消费贷款"; break;
+//            case ("4") : loanType = "信用贷款"; break;
             default: return BankResult.build(400,"贷款类型不存在！");
-        }
-
-        try {
-
-            BankAccount bankAccount = new BankAccount();
-            bankAccount.setAccount(bankLoanApplyInfo.getAccount());
-            bankAccount.setBalances(DateControlForLoan.toCriterionD( amountInAccount +
-                    Double.valueOf(bankLoanApplyInfo.getAmount())));
-            bankAccountMapper.updateByPrimaryKeySelective(bankAccount);
-        }  catch (Exception e) {
-            return BankResult.build(400,"数据表更新异常");
         }
 
         //交易时间戳
@@ -106,18 +88,13 @@ public class LoanServiceImpl implements LoanService {
         bankLoan.setInsCount(Short.valueOf( bankLoanApplyInfo.getTime() ));
         bankLoan.setLoanInterest( DateControlForLoan.toCriterionD(bankLoanApplyInfo.getInterestRate() ));
         bankLoan.setLoanAmountSum( DateControlForLoan.toCriterionD(  tempSum  ) );
-        bankLoan.setExpirationDate( DateControlForLoan.getExpirationDate(1 +
-                Short.valueOf( bankLoanApplyInfo.getTime() )) );
+        bankLoan.setExpirationDate( DateControlForLoan.getExpirationDate(1 + Short.valueOf( bankLoanApplyInfo.getTime() )) );
         bankLoan.setRecoveredAmount( 0.00 );
         bankLoan.setLoanTypeName( loanType );
         bankLoan.setLoanStatus( "未到期" );
-        bankLoan.setReviewerId(bankLoanApplyInfo.getReviewerId());
+        //TODO 审核员ID 待插入
         try {
             bankLoanMapper.insert(bankLoan);
-            // 如果存在这条记录，则进行缓存
-            // REDIS
-//            String string = String.valueOf(transId);
-//            jedisClient.set(REDIS_SESSION_KEY+ LOAN + string, JsonUtils.objectToJson(bankLoan));
         } catch (Exception e) {
             return BankResult.build(400,"数据表插入异常");
         }
@@ -132,7 +109,7 @@ public class LoanServiceImpl implements LoanService {
                 payMoney * Short.valueOf(bankLoanApplyInfo.getTime());
         payMoney1 = DateControlForLoan.toCriterionD(payMoney1 );
         for (int i = 0; i < Short.valueOf( bankLoanApplyInfo.getTime() ); i++) {
-            long paymentId = snowFlake1.nextId();
+            long paymentId = snowFlake.nextId();
             BankLoanPayment bankLoanPayment = new BankLoanPayment();
             //将 payment_date 设置为到期日
             bankLoanPayment.setPaymentId(String.valueOf(paymentId));
@@ -151,7 +128,6 @@ public class LoanServiceImpl implements LoanService {
             bankLoanPayment.setReimbursement(0.00);
             try {
                 bankLoanPaymentMapper.insert(bankLoanPayment);
-                //这里不需要做缓存
             } catch (Exception e) {
                 return BankResult.build(400,"数据表插入异常");
             }
@@ -159,6 +135,7 @@ public class LoanServiceImpl implements LoanService {
 
         return BankResult.build(200,"交易成功！");
     }
+
 
     /**
      * 还款
@@ -189,6 +166,7 @@ public class LoanServiceImpl implements LoanService {
         bankLoanPaylog.setAccount(bankLoanPaymentInfo.getAccount());
         bankLoanPaylog.setTransId(bankLoanPaymentInfo.getTransId() );
         bankLoanPaylog.setPayAmount( DateControlForLoan.toCriterionD(bankLoanPaymentInfo.getAmount()) );
+
         //插入
         try {
             bankLoanPaylogMapper.insert(bankLoanPaylog);
@@ -199,29 +177,18 @@ public class LoanServiceImpl implements LoanService {
         //判断 transId 是否是属于account的一个合法 贷款号，并进行计算
         try {
             String transId = bankLoanPaymentInfo.getTransId();
-            //@REDIS banloan中找有该缓存
-//            System.out.println( jedisClient.get(REDIS_SESSION_KEY + LOAN + transId ));
-            BankLoan bankLoan = JsonUtils.jsonToPojo( jedisClient.get(REDIS_SESSION_KEY + LOAN + transId),
-                    BankLoan.class);
-            if(bankLoan == null) {
-                bankLoan = bankLoanMapper.selectByPrimaryKey( transId );
-            }
+            BankLoan bankLoan = bankLoanMapper.selectByPrimaryKey( transId );
             String accountTemp = bankLoan.getAccount();
             if( !accountTemp.equals( bankLoanPaymentInfo.getAccount() ) ) {
                 return BankResult.build(400,"账户号有误");
             }
-            //查询 transId 的所有贷款记录
-            //@REDIS 有没有这个 bankLoanPaymentList
-            List<BankLoanPayment> bankLoanPaymentList = JsonUtils.jsonToList(
-                    jedisClient.get(REDIS_SESSION_KEY + LOAN_PAYMENT + transId),BankLoanPayment.class);
-            if(bankLoanPaymentList == null) {
-                BankLoanPaymentExample bankLoanPaymentExample = new BankLoanPaymentExample();
-                bankLoanPaymentExample.setOrderByClause("ins_num ASC");
-                BankLoanPaymentExample.Criteria criteria = bankLoanPaymentExample.createCriteria();
-                criteria.andTransIdEqualTo(transId);
-                criteria.andIsFinishedEqualTo("false");
-                bankLoanPaymentList = bankLoanPaymentMapper.selectByExample(bankLoanPaymentExample);
-            }
+            //查询 transId 的贷款记录
+            BankLoanPaymentExample bankLoanPaymentExample = new BankLoanPaymentExample();
+            bankLoanPaymentExample.setOrderByClause("ins_num ASC");
+            BankLoanPaymentExample.Criteria criteria = bankLoanPaymentExample.createCriteria();
+            criteria.andTransIdEqualTo(transId);
+            criteria.andIsFinishedEqualTo("false");
+            List<BankLoanPayment> bankLoanPaymentList = bankLoanPaymentMapper.selectByExample(bankLoanPaymentExample);
             //现在时间戳
             long nowTime = System.currentTimeMillis();  //时间戳
             double amount = Long.valueOf( bankLoanPaymentInfo.getAmount() );    //还款额，可能会有剩余
@@ -242,54 +209,56 @@ public class LoanServiceImpl implements LoanService {
                         neededMoney += neededMoney * bankLoanPayment.getFineRate() / 100;
                     }
                     //上次时间戳改变到今天的 23:59:59
-                    double fineMoney = neededMoney - ( bankLoanPayment.getAllPaymentAmount() 
+                    double fineMoney = neededMoney - ( bankLoanPayment.getAllPaymentAmount()
                             - bankLoanPayment.getReimbursement() );
                     fineAll += fineMoney;   //罚金加钱
-
-                    bankLoanPayment.setPaymentDate(DateControlForLoan.
+                    BankLoanPayment bankLoanPayment1 = new BankLoanPayment();
+                    bankLoanPayment1.setPaymentId(bankLoanPayment.getPaymentId());
+                    bankLoanPayment1.setPaymentDate(DateControlForLoan.
                             getTimestampAboutEndOfDay());   //获取该天的23:59:59的时间戳 ，防止罚金被重复算
-                    bankLoanPayment.setAllPaymentAmount(DateControlForLoan.toCriterionD
+                    bankLoanPayment1.setAllPaymentAmount(DateControlForLoan.toCriterionD
                             (bankLoanPayment.getAllPaymentAmount() + fineMoney));
                     // 钱够还这期
-                    if(amount >= neededMoney) { 
+                    if(amount >= neededMoney) {
                         amount -= neededMoney;
-                        bankLoanPayment.setReimbursement(DateControlForLoan.toCriterionD
+                        bankLoanPayment1.setReimbursement(DateControlForLoan.toCriterionD
                                 (bankLoanPayment.getReimbursement() + neededMoney) );    //默认这一期先还
-                        bankLoanPayment.setIsFinished("true");     //已还清
+                        bankLoanPayment1.setIsFinished("true");     //已还清
                     }
                     else {
                         //还没还清
                         overDueNotPay = true;
                         allPayed = false;
-                        bankLoanPayment.setReimbursement(DateControlForLoan.toCriterionD
+                        bankLoanPayment1.setReimbursement(DateControlForLoan.toCriterionD
                                 (bankLoanPayment.getReimbursement() + amount));
                         amount = 0;
                     }
                     try {
-                        bankLoanPaymentMapper.updateByPrimaryKey(bankLoanPayment);
+                        bankLoanPaymentMapper.updateByPrimaryKeySelective(bankLoanPayment1);
                     }catch (Exception e) {
                         return BankResult.build(400,"数据表插入异常");
                     }
                 }
                 else {  //不需要算罚金
                     double neededMoney = bankLoanPayment.getAllPaymentAmount() - bankLoanPayment.getReimbursement();
-                    bankLoanPayment.setPaymentId(bankLoanPayment.getPaymentId());
+                    BankLoanPayment bankLoanPayment2 = new BankLoanPayment();
+                    bankLoanPayment2.setPaymentId(bankLoanPayment.getPaymentId());
                     // 钱够还这期
                     if(amount >= neededMoney) {
                         amount -= neededMoney;
-                        bankLoanPayment.setReimbursement(DateControlForLoan.toCriterionD
+                        bankLoanPayment2.setReimbursement(DateControlForLoan.toCriterionD
                                 (bankLoanPayment.getReimbursement() + neededMoney ));
-                        bankLoanPayment.setIsFinished("true");     //已还清
+                        bankLoanPayment2.setIsFinished("true");     //已还清
                     }
                     else {
                         //还没还清
-                        bankLoanPayment.setReimbursement(DateControlForLoan.toCriterionD
+                        bankLoanPayment2.setReimbursement(DateControlForLoan.toCriterionD
                                 (bankLoanPayment.getReimbursement() + amount));
                         amount = 0.0;
                         allPayed = false;
                     }
                     try {
-                        bankLoanPaymentMapper.updateByPrimaryKey(bankLoanPayment);
+                        bankLoanPaymentMapper.updateByPrimaryKeySelective(bankLoanPayment2);
                     }catch (Exception e) {
                         return BankResult.build(400,"数据表更新异常");
                     }
@@ -311,39 +280,30 @@ public class LoanServiceImpl implements LoanService {
                 return BankResult.build(400,"数据表更新异常");
             }
 
+
             //bankLoan 的修改
             recoveredMoney = Double.valueOf(bankLoanPaymentInfo.getAmount()) - amount;
-            bankLoan.setRecoveredAmount(DateControlForLoan.toCriterionD
+            BankLoan bankLoan1 = new BankLoan();
+            bankLoan1.setTransId(bankLoan.getTransId());
+            bankLoan1.setRecoveredAmount(DateControlForLoan.toCriterionD
                     (bankLoan.getRecoveredAmount() + recoveredMoney));
-            bankLoan.setLoanAmountSum(DateControlForLoan.toCriterionD
+            bankLoan1.setLoanAmountSum(DateControlForLoan.toCriterionD
                     (bankLoan.getLoanAmountSum() + fineAll));
             //时间到了 并已经还清
             if(allPayed) {
-                bankLoan.setLoanStatus("已还清");
+                bankLoan1.setLoanStatus("已还清");
             }
             if(overDueNotPay) {
-                bankLoan.setLoanStatus("逾期");
+                bankLoan1.setLoanStatus("逾期");
             }
             try {
-                bankLoanMapper.updateByPrimaryKey(bankLoan);
-                //@REDIS
-                String string = bankLoan.getTransId();
-                jedisClient.set(REDIS_SESSION_KEY+ LOAN + string, JsonUtils.objectToJson(bankLoan));
+                bankLoanMapper.updateByPrimaryKeySelective(bankLoan1);
             }catch (Exception e) {
                 return BankResult.build(400,"数据表更新异常");
             }
 
-            BankLoanPaymentExample bankLoanPaymentExample = new BankLoanPaymentExample();
-            bankLoanPaymentExample.setOrderByClause("ins_num ASC");
-            BankLoanPaymentExample.Criteria criteria = bankLoanPaymentExample.createCriteria();
-            criteria.andTransIdEqualTo(transId);
-            criteria.andIsFinishedEqualTo("false");
-            bankLoanPaymentList = bankLoanPaymentMapper.selectByExample(bankLoanPaymentExample);
-            //@REDIS
-            jedisClient.set(REDIS_SESSION_KEY + LOAN_PAYMENT + transId, JsonUtils.objectToJson(bankLoanPaymentList));
-
         } catch (Exception e) {
-            return BankResult.build(400,"数据表查询异常111");
+            return BankResult.build(400,"数据表查询异常");
         }
 
         return BankResult.build(200,"还款成功！");
@@ -355,9 +315,10 @@ public class LoanServiceImpl implements LoanService {
      */
     @Override
     public BankResult sentAllRecords() {
+        BankLoanExample bankLoanExample = new BankLoanExample();
         try {
-            BankLoanExample bankLoanExample = new BankLoanExample();
             List<BankLoan> bankLoanList = bankLoanMapper.selectByExample(bankLoanExample);
+            System.out.println(bankLoanList.get(0).getTransId());
             return BankResult.ok(bankLoanList);
         } catch (Exception e) {
             return BankResult.build(400,"数据表查询异常");
@@ -372,19 +333,9 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public BankResult sentOneRecord(String transId) {
         try {
-            //@REDIS
-            String str = jedisClient.get(REDIS_SESSION_KEY+LOAN+transId);
-            BankLoan bankLoan = null;
-            if(str != null) {
-                bankLoan = JsonUtils.jsonToPojo(str, BankLoan.class);
-            }
-            if(bankLoan == null) {
-                bankLoan = bankLoanMapper.selectByPrimaryKey(transId);
-            }
-            if(bankLoan == null) {
-                return BankResult.build(400, "贷款交易号不存在，请检查输入正确性");
-            }
-            jedisClient.set(REDIS_SESSION_KEY+LOAN+transId, JsonUtils.objectToJson(bankLoan));
+            BankLoan bankLoan = bankLoanMapper.selectByPrimaryKey(transId);
+            if(bankLoan == null)
+                return BankResult.build(400,"贷款交易号不存在，请检查输入正确性");
             return BankResult.ok(bankLoan);
         } catch (Exception e) {
             return BankResult.build(400,"数据表查询异常");
@@ -393,18 +344,9 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     public BankResult getInterestRate() {
+        BankLoanTypeExample bankLoanTypeExample = new BankLoanTypeExample();
         try {
-            List<BankLoanType> bankLoanTypeList = null;
-            String str =jedisClient.get(REDIS_SESSION_KEY + LOAN_TYPE);
-            //@REDIS
-            if(str != null) {
-                bankLoanTypeList = JsonUtils.jsonToList( str, BankLoanType.class);
-            }
-            if(bankLoanTypeList == null) {
-                BankLoanTypeExample bankLoanTypeExample = new BankLoanTypeExample();
-                bankLoanTypeList = bankLoanTypeMapper.selectByExample(bankLoanTypeExample);
-                jedisClient.set(REDIS_SESSION_KEY + LOAN_TYPE, JsonUtils.objectToJson(bankLoanTypeList));
-            }
+            List<BankLoanType> bankLoanTypeList = bankLoanTypeMapper.selectByExample(bankLoanTypeExample);
             return BankResult.ok(bankLoanTypeList);
         } catch (Exception e) {
             return BankResult.build(400,"数据表查询异常");
@@ -422,16 +364,7 @@ public class LoanServiceImpl implements LoanService {
         }
 
         try {
-            //@REDIS
-            String str = jedisClient.get(REDIS_SESSION_KEY + LOAN_TYPE + value);
-            BankLoanType bankLoanType = null;
-            if(str != null ) {
-                bankLoanType = JsonUtils.jsonToPojo(str, BankLoanType.class);
-            }
-            if(bankLoanType == null) {
-                bankLoanType = bankLoanTypeMapper.selectByPrimaryKey(text);
-                jedisClient.set(REDIS_SESSION_KEY + LOAN_TYPE + value, JsonUtils.objectToJson(bankLoanType));
-            }
+            BankLoanType bankLoanType = bankLoanTypeMapper.selectByPrimaryKey(text);
             return BankResult.ok(bankLoanType);
         } catch (Exception e) {
             return BankResult.build(400,"数据表查询异常");
@@ -439,11 +372,11 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public BankResult getPaylog(String logId) {
+    public BankResult getPaylog(String value) {
+        BankLoanPaylogExample bankLoanPaylogExample = new BankLoanPaylogExample();
+        BankLoanPaylogExample.Criteria criteria = bankLoanPaylogExample.createCriteria();
+        criteria.andTransIdEqualTo(value);
         try {
-            BankLoanPaylogExample bankLoanPaylogExample = new BankLoanPaylogExample();
-            BankLoanPaylogExample.Criteria criteria = bankLoanPaylogExample.createCriteria();
-            criteria.andTransIdEqualTo(logId);
             List<BankLoanPaylog> bankLoanPaylogs = bankLoanPaylogMapper.selectByExample(bankLoanPaylogExample);
             return BankResult.ok(bankLoanPaylogs);
         } catch (Exception e) {
@@ -452,26 +385,17 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public BankResult getPaymentOneInfo(String transId) {
+    public  BankResult getPaymentOneInfo(String value) {
+        BankLoanPaymentExample bankLoanPaymentExample = new BankLoanPaymentExample();
+        BankLoanPaymentExample.Criteria criteria = bankLoanPaymentExample.createCriteria();
+        criteria.andTransIdEqualTo(value);
         try {
-            String str = jedisClient.get(REDIS_SESSION_KEY+LOAN_PAYMENT+ transId);
-            List<BankLoanPayment> bankLoanPaymentList = null;
-            if(str != null) {
-                bankLoanPaymentList = JsonUtils.jsonToList(str, BankLoanPayment.class);
-            }
-            if(bankLoanPaymentList == null) {
-                BankLoanPaymentExample bankLoanPaymentExample = new BankLoanPaymentExample();
-                BankLoanPaymentExample.Criteria criteria = bankLoanPaymentExample.createCriteria();
-                criteria.andTransIdEqualTo( transId);
-                bankLoanPaymentList = bankLoanPaymentMapper.selectByExample(bankLoanPaymentExample);
-                jedisClient.set(REDIS_SESSION_KEY + LOAN_PAYMENT+ transId , JsonUtils.objectToJson(bankLoanPaymentList));
-            }
+            List<BankLoanPayment> bankLoanPaymentList = bankLoanPaymentMapper.selectByExample(bankLoanPaymentExample);
             return BankResult.ok(bankLoanPaymentList);
         } catch (Exception e) {
-        return BankResult.build(400,"数据表查询异常");
+            return BankResult.build(400,"数据表查询异常");
         }
     }
-
     /**
      * 判断账户合法性
      * @param account    账户号
@@ -482,8 +406,9 @@ public class LoanServiceImpl implements LoanService {
      * @param flag       是否要进行卡内余额和金额的对比，true 表示要
      * @return           不合法，返回不合法原因；合法给出 custId，降低外界再次获得 custId 的开销
      */
-    public BankResult isLegalInfo(String account, String custName, String IdCard, String password,
-                                  String amount, boolean flag) {
+    public BankResult isLegalInfo(String account, String custName,String IdCard,String password,
+                                  String amount,boolean flag) {
+
         try {
             //判断 还钱数 是否是一个 double 数
             try {
@@ -492,7 +417,6 @@ public class LoanServiceImpl implements LoanService {
                 return BankResult.build(400,"还款金额不合法");
             }
             // 判断账户是否存在
-            //TODO 团队之间的缓存控制，这边先不做了
             BankAccount bankAccount = bankAccountMapper.selectByPrimaryKey(account);
             if(bankAccount == null) { return BankResult.build(400,"账户名不存在！"); }
             //判断密码是否匹配
@@ -516,12 +440,12 @@ public class LoanServiceImpl implements LoanService {
                 if( Double.valueOf(amount) > Double.valueOf(bankAccount.getBalances()) ) {
                     return BankResult.build(400,"还款金额超过账户余额");
                 }
+                amountInAccount = Double.valueOf(bankAccount.getBalances());
             }
-            amountInAccount = Double.valueOf(bankAccount.getBalances());
             return BankResult.build(200,"OK",custId); //这个和你没关系
 
         } catch (Exception e) {
-            return BankResult.build(400,"数据表查询异常",e);
+            return BankResult.build(400,"数据表查询异常");
         }
 
     }

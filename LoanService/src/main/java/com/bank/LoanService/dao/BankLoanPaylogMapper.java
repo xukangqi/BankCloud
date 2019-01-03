@@ -4,10 +4,12 @@ import com.bank.LoanService.pojo.BankLoanPaylog;
 import com.bank.LoanService.pojo.BankLoanPaylogExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Mapper
+@Repository
 public interface BankLoanPaylogMapper {
     int countByExample(BankLoanPaylogExample example);
 
