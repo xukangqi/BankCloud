@@ -31,4 +31,5 @@ spec:
             - name: CONFIGSERVER_URI
               value: http://configserver:10001
             - name: PROFILE
-              value: dev
+              #              value: dev
+              value: default
