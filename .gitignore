@@ -3,6 +3,7 @@
 **/mvnw.cmd
 **/mvnw
 **/log
+/compose/*data
 
 ### STS ###
 .apt_generated

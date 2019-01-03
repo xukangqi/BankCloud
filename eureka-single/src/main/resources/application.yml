@@ -1,0 +1,18 @@
+server:
+  port: 8004
+spring:
+  application:
+    name: eurekasingle
+eureka:
+  instance:
+    hostname: eureka-single
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+  server:
+    waitTimeInMsWhenSyncEmpty: 30
+  serviceUrl:
+    defaultZone: http://localhost:8004
+
+info:
+  name: eureka-single

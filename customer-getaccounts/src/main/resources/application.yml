@@ -1,0 +1,31 @@
+# springboot配置文件
+
+# 实体类包路径，mapper xml 映射文件
+mybatis:
+  type-aliases-package: com.bank.customergetaccounts.pojo
+  mapper-locations: classpath:mapper/*.xml
+
+
+server:
+  port: 3004
+
+spring:
+  profiles:
+    active: jdbc
+  cloud:
+    config:
+      enabled: true
+  application:
+    name: customer-getaccounts  #服务名，用来调用
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8004/eureka/
+
+info:
+  name: customer-getaccounts
