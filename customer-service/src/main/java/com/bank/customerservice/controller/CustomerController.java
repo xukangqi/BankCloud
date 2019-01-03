@@ -63,7 +63,7 @@ public class CustomerController {
     // 修改客户信息（已测试）
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ResponseBody
-    public BankResult updateAccount(@RequestBody BankCustomer customer) {
+    public BankResult updateCustomer(@RequestBody BankCustomer customer) {
         //密码没md5
         boolean flag = customerService.update(customer);
         if (flag == true) {
@@ -77,6 +77,13 @@ public class CustomerController {
         }
     }
 
+    // 返回该id的账户信息
+    @RequestMapping(value = "/account/accountId/{accountId}", method = RequestMethod.GET)
+    @ResponseBody
+    public BankResult getAccount(@PathVariable String accountId) {
+        BankAccount account = accountService.getAccount(accountId);
+        return new BankResult(200, "ok", account);
+    }
 
 
     // 新建一个账户（已测试）
@@ -121,14 +128,28 @@ public class CustomerController {
     public BankResult verify(@RequestParam(value = "accountId") String accountId, @RequestParam(value = "password") String password) {
         boolean is = accountService.verify(accountId, password);
         if (is == true) {
-            return BankResult.ok();
+            BankAccount account = accountService.getAccount(accountId);
+            return BankResult.ok(account);
         } else {
             BankResult bankResult = new BankResult();
             String msg = "账户验证错误";
-            bankResult.setData(msg);
+            bankResult.setMsg(msg);
             bankResult.setStatus(123);
             return bankResult;
         }
+    }
+
+
+    // 修改账户信息
+    @RequestMapping(value = "/editAccount", method = RequestMethod.POST)
+    @ResponseBody
+    public BankResult updateAccount(@RequestBody BankAccount account) {
+        accountService.update(account);
+        BankResult bankResult = new BankResult();
+        String msg = "修改完成";
+        bankResult.setMsg(msg);
+        bankResult.setStatus(123);
+        return bankResult;
     }
 
 

@@ -18,7 +18,7 @@ public class DemoServiceImpl implements DemoService {
     @Override
     @HystrixCommand(fallbackMethod = "errorMethod",
             commandProperties = {
-                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds",value = "2000")
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000")
             }
     )
     public String hello() {
@@ -26,8 +26,8 @@ public class DemoServiceImpl implements DemoService {
     }
 
     //如果调用超时调用备用方法
-    public String errorMethod(){
-         return  "error";
+    public String errorMethod() {
+        return "error";
     }
 
     @Override
