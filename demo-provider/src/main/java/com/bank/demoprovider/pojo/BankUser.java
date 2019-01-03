@@ -1,4 +1,4 @@
-package com.bank.servicefund.pojo;
+package com.bank.demoprovider.pojo;
 
 public class BankUser {
     private String userId;

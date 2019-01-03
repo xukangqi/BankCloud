@@ -1,4 +1,4 @@
-package com.bank.servicefund;
+package com.bank.demoprovider;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package com.bank.servicefund.pojo;
+package com.bank.demoprovider.pojo;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
-package com.bank.servicefund.dao;
+package com.bank.demoprovider.dao;
 
-import com.bank.servicefund.pojo.BankUser;
-import com.bank.servicefund.pojo.BankUserExample;
+import com.bank.demoprovider.pojo.BankUser;
+import com.bank.demoprovider.pojo.BankUserExample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
