@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-fund-hotspot
+  labels:
+    app: service-fund-hotspot
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: service-fund-hotspot
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: service-fund-hotspot
+        tier: backend
+    spec:
+      containers:
+        - name: service-fund-hotspot
+          image: bank/Service-Fund-Hotspot:1.0
+          ports:
+            - containerPort: 9102
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "9102"
+            - name: DATABASE_URI
+              value: jdbc:mysql://bank-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-fund-normal
+  labels:
+    app: service-fund-normal
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: service-fund-normal
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: service-fund-normal
+        tier: backend
+    spec:
+      containers:
+        - name: service-fund-normal
+          image: bank/Service-Fund-Normal:1.0
+          ports:
+            - containerPort: 3003
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "9101"
+            - name: DATABASE_URI
+              value: jdbc:mysql://bank-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"

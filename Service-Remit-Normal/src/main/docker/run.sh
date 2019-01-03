@@ -1,5 +1,11 @@
 #!/bin/sh
 echo "********************************************************"
-echo "Starting the Demo Provider"
+echo "Starting Remit Normal Service"
 echo "********************************************************"
-java -Djava.security.egd=file:/dev/./urandom -jar /usr/local/demoprovider/@project.build.finalName@.jar
+java -Djava.security.egd=file:/dev/./urandom \
+     -Dserver.port=$SERVER_PORT \
+     -Deureka.client.serviceUrl.defaultZone=$EUREKASERVER_URI   \
+     -Dspring.datasource.url=$DATABASE_URI \
+     -Dspring.datasource.username=$USERNAME \
+     -Dspring.datasource.password=$PASSWORD \
+     -jar /usr/local/remitnormal/@project.build.finalName@.jar
