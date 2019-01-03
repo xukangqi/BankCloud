@@ -33,75 +33,75 @@ spec:
               value: "root"
             - name: PASSWORD
               value: "123456"
-#---
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  name: customer-getonecustomer
-#  labels:
-#    app: customer-getonecustomer
-#    tier: backend
-#spec:
-#  selector:
-#    matchLabels:
-#      app: customer-getonecustomer
-#      tier: backend
-#  replicas: 1
-#  template:
-#    metadata:
-#      labels:
-#        app: customer-getonecustomer
-#        tier: backend
-#    spec:
-#      containers:
-#        - name: customer-getonecustomer
-#          image: bank/customer-getonecustomer:1.0
-#          ports:
-#            - containerPort: 3003
-#          env:
-#            - name: EUREKASERVER_URI
-#              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
-#            - name: SERVER_PORT
-#              value: "3003"
-#            - name: DATABASE_URI
-#              value: jdbc:mysql://bank-database:3306/bank?useUnicode=true&characterEncoding=utf8
-#            - name: USERNAME
-#              value: "root"
-#            - name: PASSWORD
-#              value: "123456"
-#---
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  name: customer-service
-#  labels:
-#    app: customer-service
-#    tier: backend
-#spec:
-#  selector:
-#    matchLabels:
-#      app: customer-service
-#      tier: backend
-#  replicas: 1
-#  template:
-#    metadata:
-#      labels:
-#        app: customer-service
-#        tier: backend
-#    spec:
-#      containers:
-#        - name: customer-service
-#          image: bank/customer-service:1.0
-#          ports:
-#            - containerPort: 3005
-#          env:
-#            - name: EUREKASERVER_URI
-#              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
-#            - name: SERVER_PORT
-#              value: "3005"
-#            - name: DATABASE_URI
-#              value: jdbc:mysql://bank-database:3306/bank?useUnicode=true&characterEncoding=utf8
-#            - name: USERNAME
-#              value: "root"
-#            - name: PASSWORD
-#              value: "123456"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-getonecustomer
+  labels:
+    app: customer-getonecustomer
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: customer-getonecustomer
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: customer-getonecustomer
+        tier: backend
+    spec:
+      containers:
+        - name: customer-getonecustomer
+          image: bank/customer-getonecustomer:1.0
+          ports:
+            - containerPort: 3003
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "3003"
+            - name: DATABASE_URI
+              value: jdbc:mysql://bank-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-service
+  labels:
+    app: customer-service
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: customer-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: customer-service
+        tier: backend
+    spec:
+      containers:
+        - name: customer-service
+          image: bank/customer-service:1.0
+          ports:
+            - containerPort: 3005
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "3005"
+            - name: DATABASE_URI
+              value: jdbc:mysql://bank-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"

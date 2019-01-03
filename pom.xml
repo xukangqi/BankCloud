@@ -29,6 +29,12 @@
         <module>customer-service</module>
         <module>user-login</module>
         <module>user-service</module>
+        <module>Service-Fund-Hotspot</module>
+        <module>Service-Fund-Normal</module>
+        <module>Service-Remit-Hotspot</module>
+        <module>Service-Remit-Normal</module>
+        <module>Service-Transfer-CreateTransfer</module>
+        <module>Service-Transfer-Other</module>
     </modules>
     <build>
         <plugins>
