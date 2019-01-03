@@ -1,12 +1,13 @@
 package com.bank.ServiceRemitHotspot.service.impl;
 
-import com.bank.ServiceRemitHotspot.dao.BankAccountMapper;
+import com.bank.ServiceRemitHotspot.api.FeignAccountCustomer;
 import com.bank.ServiceRemitHotspot.dao.BankRemitLogMapper;
 import com.bank.ServiceRemitHotspot.pojo.BankAccount;
 import com.bank.ServiceRemitHotspot.pojo.BankRemitLog;
 import com.bank.ServiceRemitHotspot.pojo.BankRemitLogExample;
 import com.bank.ServiceRemitHotspot.service.RemitService;
 import com.bank.ServiceRemitHotspot.utils.BankResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -19,8 +20,9 @@ public class RemitServiceImpl implements RemitService {
     @Autowired
     private BankRemitLogMapper bankRemitLogMapper;
     @Autowired
-    private BankAccountMapper bankAccountMapper;
+    private FeignAccountCustomer feignAccountCustomer;
 
+    //已测试 2019年1月3日 11:32:37
     @Override
     @HystrixCommand(fallbackMethod = "errorMethodInRemit",
             commandProperties = {
@@ -28,7 +30,9 @@ public class RemitServiceImpl implements RemitService {
             }
     )
     public BankResult getRemit(String remitInAccount, String remitId) {
-        BankAccount inAccount = bankAccountMapper.selectByPrimaryKey(remitInAccount);
+        ObjectMapper mapper = new ObjectMapper();
+        BankAccount inAccount = mapper.convertValue(feignAccountCustomer.getAccount(remitInAccount).getData(), BankAccount.class);
+        //BankAccount inAccount = bankAccountMapper.selectByPrimaryKey(remitInAccount);
         BankRemitLog bankRemitLog = bankRemitLogMapper.selectByPrimaryKey(remitId);
         if (bankRemitLog == null) return BankResult.build(400, "汇票不存在！", "");
 
@@ -42,7 +46,8 @@ public class RemitServiceImpl implements RemitService {
         bankRemitLogMapper.updateByPrimaryKey(bankRemitLog);
 
         inAccount.setBalances(inAccount.getBalances() + bankRemitLog.getAmount());
-        bankAccountMapper.updateByPrimaryKey(inAccount);
+        feignAccountCustomer.updateAccount(inAccount);
+        //bankAccountMapper.updateByPrimaryKey(inAccount);
 
         return BankResult.ok();
     }

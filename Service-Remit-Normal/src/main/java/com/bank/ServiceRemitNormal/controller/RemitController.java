@@ -27,26 +27,4 @@ public class RemitController {
         BankResult bankResult = remitService.createRemit(name, phone, remitOutAccount, remitInAccount, password, amount);
         return bankResult;
     }
-
-    @RequestMapping(value = "/get", method = RequestMethod.POST)
-    @ResponseBody
-    public BankResult getRemit(@RequestParam(value = "remitInAccount")String remitInAccount,
-                               @RequestParam(value = "remitId")String remitId) {
-        BankResult bankResult = remitService.getRemit(remitInAccount, remitId);
-        return bankResult;
-    }
-
-    @RequestMapping(value = "/query", method = RequestMethod.GET)
-    @ResponseBody
-    public BankResult getRemitLogs() {
-        BankResult bankResult = remitService.getRemitLogs();
-        return bankResult;
-    }
-
-    @RequestMapping(value = "/query/{remitId}", method = RequestMethod.GET)
-    @ResponseBody
-    public BankResult getOneRemitLog(@RequestParam(value = "id")String remitId) {
-        BankResult bankResult = remitService.getOneRemitLog(remitId);
-        return bankResult;
-    }
 }

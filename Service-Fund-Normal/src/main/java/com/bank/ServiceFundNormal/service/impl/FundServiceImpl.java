@@ -1,12 +1,14 @@
 package com.bank.ServiceFundNormal.service.impl;
 
-import com.bank.ServiceFundNormal.api.FundProductSelectClient;
+import com.bank.ServiceFundNormal.api.FeignAccountCustomer;
+import com.bank.ServiceFundNormal.api.FeignGetOneCustomer;
 import com.bank.ServiceFundNormal.dao.*;
 import com.bank.ServiceFundNormal.pojo.*;
 import com.bank.ServiceFundNormal.service.FundService;
 import com.bank.ServiceFundNormal.utils.BankResult;
 import com.bank.ServiceFundNormal.utils.MD5;
 import com.bank.ServiceFundNormal.utils.SnowFlake;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +23,11 @@ public class FundServiceImpl implements FundService {
     @Autowired
     private BankFundLogMapper bankFundLogMapper;
     @Autowired
-    private BankCustomerMapper bankCustomerMapper;
-    @Autowired
-    private BankAccountMapper bankAccountMapper;
-    @Autowired
     private BankFundHoldMapper bankFundHoldMapper;
     @Autowired
-    private FundProductSelectClient fundProductSelectClient;
+    private FeignAccountCustomer feignAccountCustomer;
+    @Autowired
+    private FeignGetOneCustomer feigngetOneCustomer;
 
     private long datacenterId = 6L;  //数据中心
     private long machineId;     //机器标识
@@ -50,15 +50,16 @@ public class FundServiceImpl implements FundService {
         return BankResult.ok(fundId);
     }
 
+    //已测试 2019年1月3日 10:57:10
     @Override
     public BankResult createFundPurchaseTx(String name, String phone, String account, String fundId, double amount, String passowrd, String reviewerId) {
         machineId = 2L;
-
-        BankAccount bankAccount = bankAccountMapper.selectByPrimaryKey(account);
+        ObjectMapper mapper = new ObjectMapper();
+        BankAccount bankAccount = mapper.convertValue(feignAccountCustomer.getAccount(account).getData(), BankAccount.class);
         if (bankAccount == null) return BankResult.build(400, "账户不存在！", "");
 
         String custId = bankAccount.getCustId();
-        BankCustomer bankCustomer = bankCustomerMapper.selectByPrimaryKey(custId);
+        BankCustomer bankCustomer = mapper.convertValue(feigngetOneCustomer.getOneCustomer(custId).getData(), BankCustomer.class);
 
         String pw = MD5.string2MD5(passowrd);
 
@@ -72,7 +73,7 @@ public class FundServiceImpl implements FundService {
 
         if (!bankAccount.getPassword().equals(pw)) return BankResult.build(400, "密码错误！", "");
 
-        // 找到对应的基金产品
+         // 找到对应的基金产品
         BankFundProduct bankFundProduct = getUpdatedFundProduct(fundId);
         if (bankFundProduct == null) {
             return BankResult.build(400, "基金产品不存在！", "");
@@ -100,7 +101,8 @@ public class FundServiceImpl implements FundService {
 
         // 修改账户余额
         bankAccount.setBalances(bankAccount.getBalances() - amount);
-        bankAccountMapper.updateByPrimaryKey(bankAccount);
+        feignAccountCustomer.updateAccount(bankAccount);
+        //bankAccountMapper.updateByPrimaryKey(bankAccount);
 
         // 修改持有份额
         BankFundHoldKey bankFundHoldKey = new BankFundHoldKey();
@@ -122,11 +124,12 @@ public class FundServiceImpl implements FundService {
         return BankResult.ok(bankFundLog.getFundTxId());
     }
 
+    //已测试 2019年1月3日 11:01:43
     @Override
     public BankResult createFundRedemptionTx(String account, String fundId, double share, String password, String reviewerId) {
         machineId = 2L;
-
-        BankAccount bankAccount = bankAccountMapper.selectByPrimaryKey(account);
+        ObjectMapper mapper = new ObjectMapper();
+        BankAccount bankAccount = mapper.convertValue(feignAccountCustomer.getAccount(account).getData(), BankAccount.class);
         BankFundHoldKey bankFundHoldKey = new BankFundHoldKey();
         bankFundHoldKey.setFundId(fundId);
         bankFundHoldKey.setAccount(account);
@@ -170,19 +173,10 @@ public class FundServiceImpl implements FundService {
 
         bankFundLogMapper.insert(bankFundLog);
         bankFundHoldMapper.updateByPrimaryKey(bankFundHold);
-        bankAccountMapper.updateByPrimaryKey(bankAccount);
+        feignAccountCustomer.updateAccount(bankAccount);
+        //bankAccountMapper.updateByPrimaryKey(bankAccount);
 
         return BankResult.ok(bankFundLog.getFundTxId());
-    }
-
-    @Override
-    public BankResult getFundProducts() {
-        return fundProductSelectClient.getFundProducts();
-    }
-
-    @Override
-    public BankResult getOneFundProduct(String fundId) {
-        return fundProductSelectClient.getOneFundProduct(fundId);
     }
 
     @Override

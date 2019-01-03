@@ -9,10 +9,6 @@ public interface FundService {
 
     BankResult createFundRedemptionTx(String account, String fundId, double share, String password, String reviewerId);
 
-    BankResult getFundProducts();
-
-    BankResult getOneFundProduct(String fundId);
-
     BankResult getFundLogs();
 
     BankResult getOneFundLog(String fundTxId);

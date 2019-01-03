@@ -25,7 +25,9 @@ spring:
       web-stat-filter:
         url-pattern: /*
         exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
-
+ribbon:
+  eureka:
+    enabled: true
 eureka:
   instance:
     prefer-ip-address: true

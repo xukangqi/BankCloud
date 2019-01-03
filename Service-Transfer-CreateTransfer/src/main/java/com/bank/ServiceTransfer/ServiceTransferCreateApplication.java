@@ -11,10 +11,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableEurekaClient
 //开启feign
 @EnableFeignClients
-public class ServiceTransferApplication {
+public class ServiceTransferCreateApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ServiceTransferApplication.class, args);
+        SpringApplication.run(ServiceTransferCreateApplication.class, args);
     }
 
 }
