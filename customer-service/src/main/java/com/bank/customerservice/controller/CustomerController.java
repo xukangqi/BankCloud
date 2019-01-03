@@ -63,7 +63,7 @@ public class CustomerController {
     // 修改客户信息（已测试）
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     @ResponseBody
-    public BankResult updateAccount(@RequestBody BankCustomer customer) {
+    public BankResult updateCustomer(@RequestBody BankCustomer customer) {
         //密码没md5
         boolean flag = customerService.update(customer);
         if (flag == true) {
@@ -129,6 +129,15 @@ public class CustomerController {
             bankResult.setStatus(123);
             return bankResult;
         }
+    }
+
+    // 修改账户信息
+    @RequestMapping(value = "/account/edit", method = RequestMethod.POST)
+    @ResponseBody
+    public BankResult updateAccount(@RequestBody BankAccount account) {
+        accountService.update(account);
+
+        return null;
     }
 
 
