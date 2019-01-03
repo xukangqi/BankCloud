@@ -77,6 +77,13 @@ public class CustomerController {
         }
     }
 
+    // 返回该id的账户信息
+    @RequestMapping(value = "/account/accountId/{accountId}", method = RequestMethod.GET)
+    @ResponseBody
+    public BankResult getAccount(@PathVariable String accountId) {
+        BankAccount account = accountService.getAccount(accountId);
+        return new BankResult(200, "ok", account);
+    }
 
 
     // 新建一个账户（已测试）
@@ -131,5 +138,15 @@ public class CustomerController {
         }
     }
 
-
+    // 修改用户信息
+    @RequestMapping(value = "/editAccount", method = RequestMethod.POST)
+    @ResponseBody
+    public BankResult updateAccount(@RequestBody BankAccount account) {
+        accountService.update(account);
+        BankResult bankResult = new BankResult();
+        String msg = "修改完成";
+        bankResult.setMsg(msg);
+        bankResult.setStatus(123);
+        return bankResult;
+    }
 }
