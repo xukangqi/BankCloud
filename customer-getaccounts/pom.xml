@@ -77,7 +77,7 @@
             <artifactId>druid</artifactId>
             <version>1.0.18</version>
         </dependency>
-
+       <!--todo 修改jdbc-->
         <!-- mysql -->
         <dependency>
             <groupId>mysql</groupId>
