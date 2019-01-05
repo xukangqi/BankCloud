@@ -45,7 +45,7 @@ public class LoanServiceImpl implements LoanService {
     @Override
     @HystrixCommand(fallbackMethod = "getErrorMethod",
             commandProperties = {
-                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000")
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000")
             }
     )
     //传入transId，执行还款操作

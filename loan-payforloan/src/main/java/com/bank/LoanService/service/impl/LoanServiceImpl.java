@@ -53,7 +53,7 @@ public class LoanServiceImpl implements LoanService {
     @Override
     @HystrixCommand(fallbackMethod = "getErrorMethod",
             commandProperties = {
-                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "10000")
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "5000")
             }
     )
     public BankResult payForLoan(BankLoanPaymentInfo bankLoanPaymentInfo) {
@@ -87,9 +87,13 @@ public class LoanServiceImpl implements LoanService {
             return BankResult.build(400,"数据表插入异常");
         }
 
-        BankResult result = loanPaymentServiceClient.payforLoan(bankLoanPaymentInfo.getTransId(),
-                bankLoanPaymentInfo.getAmount(),bankLoanPaymentInfo.getAccount(),amountInAccount);
-        return result;
+        try {
+            BankResult result = loanPaymentServiceClient.payforLoan(bankLoanPaymentInfo.getTransId(),
+                    bankLoanPaymentInfo.getAmount(), bankLoanPaymentInfo.getAccount(), amountInAccount);
+            return result;
+        } catch (Exception e) {
+            return BankResult.build(400,"还款异常");
+        }
 
     }
     //如果调用超时调用备用方法
