@@ -35,6 +35,10 @@
         <module>Service-Remit-Normal</module>
         <module>Service-Transfer-CreateTransfer</module>
         <module>Service-Transfer-Other</module>
+        <module>loan-applyment</module>
+        <module>loan-loanpayment</module>
+        <module>loan-payforloan</module>
+        <module>loan-loandata</module>
     </modules>
     <build>
         <plugins>
