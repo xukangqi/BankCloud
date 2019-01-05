@@ -1,0 +1,42 @@
+server:
+  port: 4005
+
+spring:
+  application:
+    name: deposit-Rate-Service #服务名,用来调用
+  profiles:
+    active:
+      default
+  cloud:
+    config:
+      enabled: true
+
+  datasource:
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bank?useUnicode=true&characterEncoding=utf8&useSSL=false
+    druid:
+      stat-view-servlet:
+        url-pattern: /druid/*
+        reset-enable: true
+        login-username: admin
+        login-password: admin
+      web-stat-filter:
+        url-pattern: /*
+        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: Deposit-Rate-Service:4005 #别名，显示在eureka页面中，随意
+  client:
+    service-url:
+      defaultZone: http://localhost:8004/eureka
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+feign:
+  hystrix:
+    enabled: true

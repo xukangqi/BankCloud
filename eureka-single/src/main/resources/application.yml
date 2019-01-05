@@ -9,10 +9,11 @@ eureka:
   client:
     registerWithEureka: false
     fetchRegistry: false
+    serviceUrl:
+     defaultZone: http://localhost:8004
   server:
     waitTimeInMsWhenSyncEmpty: 30
-  serviceUrl:
-    defaultZone: http://localhost:8004
+
 
 info:
   name: eureka-single
