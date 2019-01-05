@@ -18,7 +18,7 @@
         <java.version>1.8</java.version>
         <spring-cloud.version>Greenwich.RC1</spring-cloud.version>
         <start-class>com.bank.LoanService.LoanPaymentApplication</start-class>
-        <docker.image.name>bank/LoanService</docker.image.name>
+        <docker.image.name>bank/loan-loanpayment</docker.image.name>
         <docker.image.tag>1.0</docker.image.tag>
     </properties>
 
