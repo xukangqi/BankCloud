@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fund-database
+  name: loan-payforloan-database
   labels:
-    app: fund-database
+    app: loan-payforloan-database
     tier: backend
 spec:
   selector:
     matchLabels:
-      app: fund-database
+      app: loan-payforloan-database
       tier: backend
   replicas: 1
   template:
     metadata:
       labels:
-        app: fund-database
+        app: loan-payforloan-database
         tier: backend
     spec:
       containers:
-        - name: fund-database
+        - name: loan-payforloan-database
           image: mysql:5.6
           ports:
             - containerPort: 3306
@@ -35,7 +35,7 @@ spec:
       volumes:
         - name: sqlscript-volume
           hostPath:
-            path: /Users/xukangqi/Desktop/BankSystem/compose/fundsqlscript
+            path: /Users/xukangqi/Desktop/BankSystem/compose/loan-payforloan-sqlscript
         - name: data-volume
           hostPath:
             path: /Users/xukangqi/Desktop/BankSystem/compose/customerdata
@@ -43,9 +43,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: fund-database
+  name: loan-payforloan-database
   labels:
-    app: fund-database
+    app: loan-payforloan-database
     tier: backend
 spec:
   type: NodePort
@@ -53,5 +53,5 @@ spec:
     - port: 3306
       targetPort: 3306
   selector:
-    app: fund-database
+    app: loan-payforloan-database
     tier: backend

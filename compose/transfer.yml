@@ -28,7 +28,7 @@ spec:
             - name: SERVER_PORT
               value: "9106"
             - name: DATABASE_URI
-              value: jdbc:mysql://service-database:3306/bank?useUnicode=true&characterEncoding=utf8
+              value: jdbc:mysql://transfer-database:3306/bank?useUnicode=true&characterEncoding=utf8
             - name: USERNAME
               value: "root"
             - name: PASSWORD

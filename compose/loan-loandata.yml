@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loan-loandata
+  labels:
+    app: loan-loandata
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: loan-loandata
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loan-loandata
+        tier: backend
+    spec:
+      containers:
+        - name: loan-loandata
+          image: bank/loan-loandata:1.0
+          ports:
+            - containerPort: 7001
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "7001"
+            - name: DATABASE_URI
+              value: jdbc:mysql://loan-loandata-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"

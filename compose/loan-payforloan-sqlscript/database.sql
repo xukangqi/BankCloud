@@ -1,0 +1,32 @@
+DROP database if exists bank;
+
+CREATE DATABASE bank DEFAULT CHARACTER SET utf8;
+
+USE bank;
+
+-- ----------------------------
+-- Table structure for bank_loan_paylog
+-- ----------------------------
+DROP TABLE IF EXISTS `bank_loan_paylog`;
+CREATE TABLE `bank_loan_paylog` (
+  `paylog_id` varchar(20) NOT NULL,
+  `trans_id` varchar(20) DEFAULT NULL,
+  `pay_amount` double DEFAULT NULL,
+  `pay_date` varchar(20) DEFAULT NULL,
+  `account` varchar(32) NOT NULL,
+  PRIMARY KEY (`paylog_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of bank_loan_paylog
+-- ----------------------------
+BEGIN;
+INSERT INTO `bank_loan_paylog` VALUES ('18738208947183616', '18733822011379712', 1000, '1541235537152', '6668541233587412');
+INSERT INTO `bank_loan_paylog` VALUES ('18739056754434048', '18733822011379712', 5000, '1541235739285', '6668541233587412');
+INSERT INTO `bank_loan_paylog` VALUES ('19446575986515968', '19445647598292992', 10000, '1541404425015', '6668541404022215');
+INSERT INTO `bank_loan_paylog` VALUES ('19861358590173184', '18733822011379712', 100, '1541503316894', '6668541233587412');
+INSERT INTO `bank_loan_paylog` VALUES ('19864848477593600', '18733822011379712', 100, '1541504148948', '6668541233587412');
+INSERT INTO `bank_loan_paylog` VALUES ('20939995934498816', '20939860991152128', 1000, '1541760484077', '6668541233587412');
+INSERT INTO `bank_loan_paylog` VALUES ('21623609865150464', '21620609104875520', 3000, '1541923470339', '6668541921988419');
+INSERT INTO `bank_loan_paylog` VALUES ('21623739724996608', '21620609104875520', 2000, '1541923501300', '6668541921988419');
+COMMIT;
