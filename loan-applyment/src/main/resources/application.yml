@@ -43,6 +43,5 @@ feign:
   hystrix:
     enabled: true
 
-
 mybatis:
   mapper-locations: classpath:mapper/*.xml
