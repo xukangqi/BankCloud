@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-transfer-createtransfer
+  labels:
+    app: service-transfer-createtransfer
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: service-transfer-createtransfer
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: service-transfer-createtransfer
+        tier: backend
+    spec:
+      containers:
+        - name: service-transfer-createtransfer
+          image: bank/Service-Transfer-CreateTransfer:1.0
+          ports:
+            - containerPort: 9106
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "9106"
+            - name: DATABASE_URI
+              value: jdbc:mysql://service-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-transfer-other
+  labels:
+    app: service-transfer-other
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: service-transfer-other
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: service-transfer-other
+        tier: backend
+    spec:
+      containers:
+        - name: service-transfer-other
+          image: bank/Service-Transfer-Other:1.0
+          ports:
+            - containerPort: 9105
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "9105"
+            - name: DATABASE_URI
+              value: jdbc:mysql://service-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"

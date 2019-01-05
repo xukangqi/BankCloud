@@ -35,7 +35,6 @@ public class DemoServiceImpl implements DemoService {
 //            commandProperties = {
 //                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds",value = "5000")
 //            }
-//    )
     public BankUser getObject() {
         BankUser bankUser1=new BankUser();
         bankUser1.setAddress("123124124");
