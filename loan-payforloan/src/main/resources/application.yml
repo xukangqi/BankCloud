@@ -1,15 +1,16 @@
 server:
-  port: 7001
+  port: 7004
 
 spring:
   application:
-    name: LoanService #服务名,用来调用
+    name: loan-payforloan #服务名,用来调用
   profiles:
     active:
       default
   cloud:
     config:
       enabled: true
+
 
   datasource:
     username: root
@@ -26,13 +27,23 @@ spring:
         url-pattern: /*
         exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
 
+ribbon:
+  eureka:
+    enabled: true
+
 eureka:
   instance:
     prefer-ip-address: true
-    instance-id: LoanService7001 #别名，显示在eureka页面中，随意
+    instance-id: loan-payforloan7004 #别名，显示在eureka页面中，随意
   client:
     service-url:
       defaultZone: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+
+feign:
+  hystrix:
+    enabled: true
+
+
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

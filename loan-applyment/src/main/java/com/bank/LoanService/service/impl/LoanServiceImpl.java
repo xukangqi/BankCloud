@@ -1,10 +1,17 @@
 package com.bank.LoanService.service.impl;
 
+import com.bank.LoanService.api.AccountServiceClient;
+import com.bank.LoanService.api.CustomerServiceClient;
+import com.bank.LoanService.api.LoanDataServiceClient;
+import com.bank.LoanService.api.LoanPaymentServiceClient;
 import com.bank.LoanService.dao.*;
 import com.bank.LoanService.pojo.*;
 import com.bank.LoanService.pojo.loan.BankLoanApplyInfo;
 import com.bank.LoanService.service.LoanService;
 import com.bank.LoanService.utils.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +25,34 @@ public class LoanServiceImpl implements LoanService {
     @Autowired
     private BankLoanTypeMapper bankLoanTypeMapper;
 
+    @Autowired
+    private AccountServiceClient accountServiceClient;
+
+    @Autowired
+    private CustomerServiceClient customerServiceClient;
+
+    @Autowired
+    private LoanDataServiceClient loanDataServiceClient;
+
+    @Autowired
+    private LoanPaymentServiceClient loanPaymentServiceClient;
 
     private long datacenterId = 3L;  //数据中心
     private long machineId ;     //机器标识
 
     private double amountInAccount = 0.0;
 
+    @Override
+    @HystrixCommand(fallbackMethod = "getErrorMethod",
+            commandProperties = {
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000")
+            }
+    )
     /**
      * 贷款申请
      * @param bankLoanApplyInfo
      * @return
      */
-    @Override
     public BankResult dealApplyment(BankLoanApplyInfo bankLoanApplyInfo) {
 
         machineId = 1L;
@@ -83,7 +106,8 @@ public class LoanServiceImpl implements LoanService {
         bankLoan.setLoanStatus( "未到期" );
         //TODO 审核员ID 待插入
         try {
-            bankLoanMapper.insert(bankLoan);
+            BankResult res = loanDataServiceClient.insertLoan(bankLoan);
+            if (res.getStatus()!=200) return res;
         } catch (Exception e) {
             return BankResult.build(400,"数据表插入异常");
         }
@@ -116,7 +140,8 @@ public class LoanServiceImpl implements LoanService {
             bankLoanPayment.setFineRate(fineRate);
             bankLoanPayment.setReimbursement(0.00);
             try {
-                bankLoanPaymentMapper.insert(bankLoanPayment);
+                BankResult res = loanPaymentServiceClient.insertLoanPayment(bankLoanPayment);
+                if (res.getStatus()!=200) return res;
             } catch (Exception e) {
                 return BankResult.build(400,"数据表插入异常");
             }
@@ -125,9 +150,10 @@ public class LoanServiceImpl implements LoanService {
         return BankResult.build(200,"交易成功！");
     }
 
-
-
-
+    //如果调用超时调用备用方法
+    public BankResult getErrorMethod(BankLoanApplyInfo bankLoanApplyInfo) {
+        return BankResult.build(400,"贷款申请请求其他服务超时");
+    }
 
 
     @Override
@@ -159,6 +185,7 @@ public class LoanServiceImpl implements LoanService {
         }
     }
 
+
     /**
      * 判断账户合法性
      * @param account    账户号
@@ -180,7 +207,9 @@ public class LoanServiceImpl implements LoanService {
                 return BankResult.build(400,"还款金额不合法");
             }
             // 判断账户是否存在
-            BankAccount bankAccount = bankAccountMapper.selectByPrimaryKey(account);
+            ObjectMapper mapper = new ObjectMapper();
+            BankResult res = accountServiceClient.getAccount(account);
+            BankAccount bankAccount = mapper.convertValue(res.getData(),BankAccount.class);
             if(bankAccount == null) { return BankResult.build(400,"账户名不存在！"); }
             //判断密码是否匹配
             if(!MD5.string2MD5(password).equals(bankAccount.getPassword())) {
@@ -188,7 +217,7 @@ public class LoanServiceImpl implements LoanService {
             }
             // 判断姓名与账户是否匹配
             String custId = bankAccount.getCustId();
-            BankCustomer bankCustomer = bankCustomerMapper.selectByPrimaryKey(custId);
+            BankCustomer bankCustomer = mapper.convertValue(customerServiceClient.getOneCustomer(custId).getData(),BankCustomer.class);
             if(bankCustomer == null) { return BankResult.build(400,"用户名不存在！"); }
             // 判断姓名账户
             if(!custName.equals(bankCustomer.getCustName()) ) {
@@ -208,6 +237,7 @@ public class LoanServiceImpl implements LoanService {
             return BankResult.build(200,"OK",custId); //这个和你没关系
 
         } catch (Exception e) {
+            System.out.println(e);
             return BankResult.build(400,"数据表查询异常");
         }
 

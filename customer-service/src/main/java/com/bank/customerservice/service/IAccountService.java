@@ -56,6 +56,12 @@ public interface IAccountService {
      */
     void update(BankAccount account);
 
+    /**
+     * 更新
+     * @param account
+     */
+    void updateSel(BankAccount account);
+
 
     /**
      * 验证账户

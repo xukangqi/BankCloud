@@ -16,7 +16,7 @@ public class LoanController {
     //数据插入
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     @ResponseBody
-    public BankResult insertLoan(BankLoan bankLoan) {
+    public BankResult insertLoan(@RequestBody BankLoan bankLoan) {
         return loanService.insertData(bankLoan);
     }
 
@@ -30,7 +30,7 @@ public class LoanController {
     //更新数据
     @RequestMapping(value = "/updateByEntity",method = RequestMethod.POST)
     @ResponseBody
-    public BankResult UpdateLoan(BankLoan bankLoan) {
+    public BankResult UpdateLoan(@RequestBody BankLoan bankLoan) {
         return loanService.updateByPrimaryKeySelective(bankLoan);
     }
 

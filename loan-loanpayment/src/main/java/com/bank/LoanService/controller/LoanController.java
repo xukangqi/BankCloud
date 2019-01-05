@@ -17,22 +17,16 @@ public class LoanController {
     //数据插入
     @RequestMapping(value = "/insert",method = RequestMethod.POST)
     @ResponseBody
-    public BankResult insertLoanPayment(BankLoanPayment bankLoan) {
+    public BankResult insertLoanPayment(@RequestBody BankLoanPayment bankLoan) {
         return loanService.insertData(bankLoan);
     }
 
-    //更新数据
-    @RequestMapping(value = "/updateByEntity",method = RequestMethod.POST)
+    //传入transId,执行还款操作
+    @RequestMapping(value = "/payforLoan/{transId}/{amount}/{account}/{amountInAccount}",method = RequestMethod.GET)
     @ResponseBody
-    public BankResult UpdateLoanPayment(BankLoanPayment bankLoan) {
-        return loanService.updateByPrimaryKeySelective(bankLoan);
-    }
-
-    //查询数据by example
-    @RequestMapping(value = "/selectByExample",method = RequestMethod.POST)
-    @ResponseBody
-    public BankResult selectByExa(BankLoanPaymentExample bankLoanPaymentExample) {
-        return loanService.selectByExample(bankLoanPaymentExample);
+    public BankResult payforLoan(@PathVariable("transId")String transId,@PathVariable("amount")String amount,
+                                 @PathVariable("account")String account,@PathVariable("amountInAccount")Double amountInAccount) {
+        return loanService.payforLoan(transId,amount,account,amountInAccount);
     }
 
     //还款信息获取

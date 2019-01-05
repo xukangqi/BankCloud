@@ -1,7 +1,6 @@
 package com.bank.LoanService.controller;
 
 import com.bank.LoanService.pojo.loan.BankLoanApplyInfo;
-import com.bank.LoanService.pojo.loan.BankLoanPaymentInfo;
 import com.bank.LoanService.service.LoanService;
 import com.bank.LoanService.utils.BankResult;
 import org.springframework.beans.factory.annotation.Autowired;

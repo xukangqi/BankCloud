@@ -152,5 +152,17 @@ public class CustomerController {
         return bankResult;
     }
 
+    // 修改账户信息Selective by wh
+    @RequestMapping(value = "/editAccountSel", method = RequestMethod.POST)
+    @ResponseBody
+    public BankResult updateAccountSel(@RequestBody BankAccount account) {
+        try{
+            accountService.updateSel(account);
+            return BankResult.ok();
+        }catch (Exception e){
+            return BankResult.build(400,"Account 插入异常",null);
+        }
+    }
+
 
 }

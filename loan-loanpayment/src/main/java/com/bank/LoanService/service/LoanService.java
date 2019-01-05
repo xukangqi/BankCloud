@@ -6,7 +6,6 @@ import com.bank.LoanService.utils.BankResult;
 
 public interface LoanService {
     public BankResult insertData(BankLoanPayment bankLoan);
-    public BankResult updateByPrimaryKeySelective(BankLoanPayment bankLoan);
-    public BankResult selectByExample(BankLoanPaymentExample bankLoanPaymentExample);
+    public BankResult payforLoan(String transId,String amounts,String account,Double amountInAcc);
     public BankResult getPaymentOneInfo(String value);
 }

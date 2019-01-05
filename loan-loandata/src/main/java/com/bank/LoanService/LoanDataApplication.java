@@ -8,10 +8,10 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 @SpringBootApplication
 @MapperScan("com.bank.LoanService.dao")
 @EnableEurekaClient
-public class LoanServiceApplication {
+public class LoanDataApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LoanServiceApplication.class, args);
+        SpringApplication.run(LoanDataApplication.class, args);
     }
 
 }
