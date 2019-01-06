@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: withdraw-account-database
+  labels:
+    app: withdraw-account-database
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: withdraw-account-database
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: withdraw-account-database
+        tier: backend
+    spec:
+      containers:
+        - name: withdraw-account-database
+          image: mysql:5.6
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: sqlscript-volume
+              mountPath: /docker-entrypoint-initdb.d
+            - name: data-volume
+              mountPath: /var/lib/mysql/
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "123456"
+            - name: LANG
+              value: C.UTF-8
+      volumes:
+        - name: sqlscript-volume
+          hostPath:
+            path: /Users/xukangqi/Desktop/BankSystem/compose/withdraw-account-sqlscript
+        - name: data-volume
+          hostPath:
+            path: /Users/xukangqi/Desktop/BankSystem/compose/withdraw-account-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: withdraw-account-database
+  labels:
+    app: withdraw-account-database
+    tier: backend
+spec:
+  type: NodePort
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: withdraw-account-database
+    tier: backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: withdraw-add-database
+  labels:
+    app: withdraw-add-database
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: withdraw-add-database
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: withdraw-add-database
+        tier: backend
+    spec:
+      containers:
+        - name: withdraw-add-database
+          image: mysql:5.6
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: sqlscript-volume
+              mountPath: /docker-entrypoint-initdb.d
+            - name: data-volume
+              mountPath: /var/lib/mysql/
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "123456"
+            - name: LANG
+              value: C.UTF-8
+      volumes:
+        - name: sqlscript-volume
+          hostPath:
+            path: /Users/xukangqi/Desktop/BankSystem/compose/withdraw-add-sqlscript
+        - name: data-volume
+          hostPath:
+            path: /Users/xukangqi/Desktop/BankSystem/compose/withdraw-add-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: withdraw-add-database
+  labels:
+    app: withdraw-add-database
+    tier: backend
+spec:
+  type: NodePort
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: withdraw-add-database
+    tier: backend

@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deposit-account-service
+  labels:
+    app: deposit-account-service
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: deposit-account-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: deposit-account-service
+        tier: backend
+    spec:
+      containers:
+        - name: deposit-account-service
+          image: bank/deposit-account-service:1.0
+          ports:
+            - containerPort: 4002
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "4002"
+            - name: DATABASE_URI
+              value: jdbc:mysql://deposit-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deposit-add-service
+  labels:
+    app: deposit-add-service
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: deposit-add-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: deposit-add-service
+        tier: backend
+    spec:
+      containers:
+        - name: deposit-add-service
+          image: bank/deposit-add-service:1.0
+          ports:
+            - containerPort: 4001
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "4001"
+            - name: DATABASE_URI
+              value: jdbc:mysql://deposit-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deposit-rate-service
+  labels:
+    app: deposit-rate-service
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: deposit-rate-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: deposit-rate-service
+        tier: backend
+    spec:
+      containers:
+        - name: deposit-rate-service
+          image: bank/deposit-rate-service:1.0
+          ports:
+            - containerPort: 4005
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "4005"
+            - name: DATABASE_URI
+              value: jdbc:mysql://deposit-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deposit-rate-get-service
+  labels:
+    app: deposit-rate-get-service
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: deposit-rate-get-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: deposit-rate-get-service
+        tier: backend
+    spec:
+      containers:
+        - name: deposit-rate-get-service
+          image: bank/deposit-rate-get-service:1.0
+          ports:
+            - containerPort: 4006
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "4006"
+            - name: DATABASE_URI
+              value: jdbc:mysql://deposit-rate-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"

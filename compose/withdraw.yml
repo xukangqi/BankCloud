@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: withdraw-account-service
+  labels:
+    app: withdraw-account-service
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: withdraw-account-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: withdraw-account-service
+        tier: backend
+    spec:
+      containers:
+        - name: withdraw-account-service
+          image: bank/withdraw-account-service:1.0
+          ports:
+            - containerPort: 4004
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "4004"
+            - name: DATABASE_URI
+              value: jdbc:mysql://withdraw-account-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: withdraw-add-service
+  labels:
+    app: withdraw-add-service
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: withdraw-add-service
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: withdraw-add-service
+        tier: backend
+    spec:
+      containers:
+        - name: withdraw-add-service
+          image: bank/withdraw-add-service:1.0
+          ports:
+            - containerPort: 4003
+          env:
+            - name: EUREKASERVER_URI
+              value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
+            - name: SERVER_PORT
+              value: "4003"
+            - name: DATABASE_URI
+              value: jdbc:mysql://withdraw-add-database:3306/bank?useUnicode=true&characterEncoding=utf8
+            - name: USERNAME
+              value: "root"
+            - name: PASSWORD
+              value: "123456"
