@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loan-loandata-database
+  labels:
+    app: loan-loandata-database
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: loan-loandata-database
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loan-loandata-database
+        tier: backend
+    spec:
+      containers:
+        - name: loan-loandata-database
+          image: mysql:5.6
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: sqlscript-volume
+              mountPath: /docker-entrypoint-initdb.d
+            - name: data-volume
+              mountPath: /var/lib/mysql/
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "123456"
+            - name: LANG
+              value: C.UTF-8
+      volumes:
+        - name: sqlscript-volume
+          hostPath:
+            path: /Users/xukangqi/Desktop/BankSystem/compose/loan-loandata-sqlscript
+        - name: data-volume
+          hostPath:
+            path: /Users/xukangqi/Desktop/BankSystem/compose/loandata
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loan-loandata-database
+  labels:
+    app: loan-loandata-database
+    tier: backend
+spec:
+  type: NodePort
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: loan-loandata-database
+    tier: backend

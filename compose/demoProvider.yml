@@ -33,3 +33,20 @@ spec:
             - name: PROFILE
               #              value: dev
               value: default
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-provider
+  labels:
+    app: demo-provider
+    tier: backend
+spec:
+  type: NodePort
+  ports:
+    - port: 9001
+      targetPort: 9001
+  selector:
+    app: demo-provider
+    tier: backend

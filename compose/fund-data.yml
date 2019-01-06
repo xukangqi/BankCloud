@@ -38,7 +38,7 @@ spec:
             path: /Users/xukangqi/Desktop/BankSystem/compose/fundsqlscript
         - name: data-volume
           hostPath:
-            path: /Users/xukangqi/Desktop/BankSystem/compose/customerdata
+            path: /Users/xukangqi/Desktop/BankSystem/compose/funddata
 ---
 apiVersion: v1
 kind: Service

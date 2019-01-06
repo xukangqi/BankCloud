@@ -57,14 +57,14 @@ spec:
         - name: service-fund-normal
           image: bank/Service-Fund-Normal:1.0
           ports:
-            - containerPort: 3003
+            - containerPort: 9101
           env:
             - name: EUREKASERVER_URI
               value: http://eurekaserver1:8001/eureka/,http://eurekaserver2:8002/eureka/,http://eurekaserver3:8003/eureka/
             - name: SERVER_PORT
               value: "9101"
             - name: DATABASE_URI
-              value: jdbc:mysql://bank-database:3306/bank?useUnicode=true&characterEncoding=utf8
+              value: jdbc:mysql://fund-database:3306/bank?useUnicode=true&characterEncoding=utf8
             - name: USERNAME
               value: "root"
             - name: PASSWORD

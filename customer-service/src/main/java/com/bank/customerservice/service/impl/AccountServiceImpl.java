@@ -101,6 +101,11 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
+    public void updateSel(BankAccount account){
+        bankAccountMapper.updateByPrimaryKeySelective(account);
+    }
+
+    @Override
     public boolean verify(String accountId, String password) {
         BankAccountExample example = new BankAccountExample();
         String pw = MD5.string2MD5(password);
