@@ -38,7 +38,7 @@ spec:
             path: /Users/xukangqi/Desktop/BankSystem/compose/remitsqlscript
         - name: data-volume
           hostPath:
-            path: /Users/xukangqi/Desktop/BankSystem/compose/customerdata
+            path: /Users/xukangqi/Desktop/BankSystem/compose/remitdata
 ---
 apiVersion: v1
 kind: Service

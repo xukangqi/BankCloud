@@ -38,7 +38,7 @@ spec:
             path: /Users/xukangqi/Desktop/BankSystem/compose/loan-loandata-sqlscript
         - name: data-volume
           hostPath:
-            path: /Users/xukangqi/Desktop/BankSystem/compose/customerdata
+            path: /Users/xukangqi/Desktop/BankSystem/compose/loandata
 ---
 apiVersion: v1
 kind: Service
