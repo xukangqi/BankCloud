@@ -39,6 +39,12 @@
         <module>loan-loanpayment</module>
         <module>loan-payforloan</module>
         <module>loan-loandata</module>
+        <module>deposit-account-service</module>
+        <module>deposit-add-service</module>
+        <module>deposit-rate-get-service</module>
+        <module>deposit-rate-service</module>
+        <module>withdraw-account-service</module>
+        <module>withdraw-add-service</module>
     </modules>
     <build>
         <plugins>
